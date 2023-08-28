@@ -1,6 +1,7 @@
 //
 //  ViewController.swift
-//  ImageFeed
+//
+//  ImageFeed App
 //
 //  Created by Eugene Dmitrichenko on 26.08.2023.
 //
