@@ -7,19 +7,21 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FB90CECC2AA64D4E0065A1A4 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90CECB2AA64D4E0065A1A4 /* ImagesListCell.swift */; };
 		FBE3B49E2A993D080035F46C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B49D2A993D080035F46C /* AppDelegate.swift */; };
 		FBE3B4A02A993D080035F46C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B49F2A993D080035F46C /* SceneDelegate.swift */; };
-		FBE3B4A22A993D080035F46C /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B4A12A993D080035F46C /* ViewController.swift */; };
+		FBE3B4A22A993D080035F46C /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B4A12A993D080035F46C /* ImagesListViewController.swift */; };
 		FBE3B4A52A993D080035F46C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FBE3B4A32A993D080035F46C /* Main.storyboard */; };
 		FBE3B4A72A993D090035F46C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FBE3B4A62A993D090035F46C /* Assets.xcassets */; };
 		FBE3B4AA2A993D090035F46C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FBE3B4A82A993D090035F46C /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FB90CECB2AA64D4E0065A1A4 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
 		FBE3B49A2A993D080035F46C /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBE3B49D2A993D080035F46C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FBE3B49F2A993D080035F46C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FBE3B4A12A993D080035F46C /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		FBE3B4A12A993D080035F46C /* ImagesListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListViewController.swift; sourceTree = "<group>"; };
 		FBE3B4A42A993D080035F46C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FBE3B4A62A993D090035F46C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FBE3B4A92A993D090035F46C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -37,6 +39,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		FB90CECD2AA64DB10065A1A4 /* ImagesList */ = {
+			isa = PBXGroup;
+			children = (
+				FB90CECB2AA64D4E0065A1A4 /* ImagesListCell.swift */,
+				FBE3B4A12A993D080035F46C /* ImagesListViewController.swift */,
+			);
+			path = ImagesList;
+			sourceTree = "<group>";
+		};
 		FBE3B4912A993D080035F46C = {
 			isa = PBXGroup;
 			children = (
@@ -58,7 +69,7 @@
 			children = (
 				FBE3B49D2A993D080035F46C /* AppDelegate.swift */,
 				FBE3B49F2A993D080035F46C /* SceneDelegate.swift */,
-				FBE3B4A12A993D080035F46C /* ViewController.swift */,
+				FB90CECD2AA64DB10065A1A4 /* ImagesList */,
 				FBE3B4A32A993D080035F46C /* Main.storyboard */,
 				FBE3B4A62A993D090035F46C /* Assets.xcassets */,
 				FBE3B4A82A993D090035F46C /* LaunchScreen.storyboard */,
@@ -138,8 +149,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FBE3B4A22A993D080035F46C /* ViewController.swift in Sources */,
+				FBE3B4A22A993D080035F46C /* ImagesListViewController.swift in Sources */,
 				FBE3B49E2A993D080035F46C /* AppDelegate.swift in Sources */,
+				FB90CECC2AA64D4E0065A1A4 /* ImagesListCell.swift in Sources */,
 				FBE3B4A02A993D080035F46C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
