@@ -28,6 +28,7 @@ final class ImagesListViewController: UIViewController {
     }
 }
 
+// MARK: - TableView Delegate Extension
 extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -46,6 +47,7 @@ extension ImagesListViewController: UITableViewDelegate {
     }
 }
 
+// MARK: - TableView Data Source Extension
 extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
