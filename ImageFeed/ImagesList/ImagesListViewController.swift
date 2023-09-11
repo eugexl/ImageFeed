@@ -85,7 +85,6 @@ extension ImagesListViewController: UITableViewDataSource {
         let likeImage = indexPath.row % 2 == 0 ? UIImage(named: "Active") : UIImage(named: "No Active")
         
         cell.likeButton.setImage(likeImage, for: .normal)
-        cell.contentView.layer
     }
 }
 
