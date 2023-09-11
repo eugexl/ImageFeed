@@ -25,6 +25,11 @@ final class ImagesListViewController: UIViewController {
         super.viewDidLoad()
         
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
     }
 }
 
@@ -80,6 +85,7 @@ extension ImagesListViewController: UITableViewDataSource {
         let likeImage = indexPath.row % 2 == 0 ? UIImage(named: "Active") : UIImage(named: "No Active")
         
         cell.likeButton.setImage(likeImage, for: .normal)
+        cell.contentView.layer
     }
 }
 
