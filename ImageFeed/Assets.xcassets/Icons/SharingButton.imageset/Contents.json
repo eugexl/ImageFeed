@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "person.crop.rectangle.stack.fill.png",
+      "filename" : "Sharing.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "person.crop.rectangle.stack.fill 1.png",
+      "filename" : "Sharing 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "person.crop.rectangle.stack.fill 2.png",
+      "filename" : "Sharing 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

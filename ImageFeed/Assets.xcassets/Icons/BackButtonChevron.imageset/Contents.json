@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "person.crop.rectangle.stack.fill.png",
+      "filename" : "chevron.backward.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "person.crop.rectangle.stack.fill 1.png",
+      "filename" : "chevron.backward 1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "person.crop.rectangle.stack.fill 2.png",
+      "filename" : "chevron.backward 2.png",
       "idiom" : "universal",
       "scale" : "3x"
     }

@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		FB34595E2AAF8CF90002B8F5 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB34595D2AAF8CF90002B8F5 /* ProfileViewController.swift */; };
 		FB90CECC2AA64D4E0065A1A4 /* ImagesListCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB90CECB2AA64D4E0065A1A4 /* ImagesListCell.swift */; };
+		FB9BEAF82AB4B323005DE297 /* SingleImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB9BEAF72AB4B323005DE297 /* SingleImageViewController.swift */; };
 		FBE3B49E2A993D080035F46C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B49D2A993D080035F46C /* AppDelegate.swift */; };
 		FBE3B4A02A993D080035F46C /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B49F2A993D080035F46C /* SceneDelegate.swift */; };
 		FBE3B4A22A993D080035F46C /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FBE3B4A12A993D080035F46C /* ImagesListViewController.swift */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		FB34595D2AAF8CF90002B8F5 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		FB90CECB2AA64D4E0065A1A4 /* ImagesListCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesListCell.swift; sourceTree = "<group>"; };
+		FB9BEAF72AB4B323005DE297 /* SingleImageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleImageViewController.swift; sourceTree = "<group>"; };
 		FBE3B49A2A993D080035F46C /* ImageFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImageFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FBE3B49D2A993D080035F46C /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FBE3B49F2A993D080035F46C /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -54,6 +56,7 @@
 			children = (
 				FB90CECB2AA64D4E0065A1A4 /* ImagesListCell.swift */,
 				FBE3B4A12A993D080035F46C /* ImagesListViewController.swift */,
+				FB9BEAF72AB4B323005DE297 /* SingleImageViewController.swift */,
 			);
 			path = ImagesList;
 			sourceTree = "<group>";
@@ -164,6 +167,7 @@
 				FBE3B49E2A993D080035F46C /* AppDelegate.swift in Sources */,
 				FB34595E2AAF8CF90002B8F5 /* ProfileViewController.swift in Sources */,
 				FB90CECC2AA64D4E0065A1A4 /* ImagesListCell.swift in Sources */,
+				FB9BEAF82AB4B323005DE297 /* SingleImageViewController.swift in Sources */,
 				FBE3B4A02A993D080035F46C /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
