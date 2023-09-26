@@ -57,8 +57,6 @@ final class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         
-        view.backgroundColor = UIColor(named: "YP Black")
-        
         setUpUI()
         exitButton.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
     }
@@ -70,6 +68,8 @@ final class ProfileViewController: UIViewController {
     }
     
     func setUpUI() {
+        
+        view.backgroundColor = UIColor(named: "YP Black")
         
         view.addSubview(nameLabel)
         view.addSubview(userIdLabel)
@@ -94,5 +94,4 @@ final class ProfileViewController: UIViewController {
             exitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0)
         ])
     }
-    
 }
