@@ -12,7 +12,6 @@ final class ProfileViewController: UIViewController {
     private let profilePhoto: UIImageView = {
         let imageName = "ProfilePhoto"
         let imageView = UIImageView(image: UIImage(named: imageName))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
     
@@ -21,7 +20,6 @@ final class ProfileViewController: UIViewController {
         label.text = "Екатерина Новикова"
         label.font = UIFont.systemFont(ofSize: 23, weight: .bold)
         label.textColor = UIColor(named: "YP White")
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -30,7 +28,6 @@ final class ProfileViewController: UIViewController {
         label.text = "@ekaterina_nov"
         label.font = UIFont.systemFont(ofSize: 13)
         label.textColor = UIColor(named: "YP Gray")
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -39,7 +36,6 @@ final class ProfileViewController: UIViewController {
         label.text = "Hello, world!"
         label.font = UIFont.systemFont(ofSize: 13.0)
         label.textColor = UIColor(named: "YP White")
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -47,7 +43,6 @@ final class ProfileViewController: UIViewController {
         let exitButtonImage = "ExitButton"
         let button = UIButton(type: .custom)
         button.setImage(UIImage(named: exitButtonImage), for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -71,11 +66,14 @@ final class ProfileViewController: UIViewController {
         
         view.backgroundColor = UIColor(named: "YP Black")
         
-        view.addSubview(nameLabel)
-        view.addSubview(userIdLabel)
-        view.addSubview(profileTextLabel)
-        view.addSubview(profilePhoto)
-        view.addSubview(exitButton)
+        [nameLabel,
+        userIdLabel,
+        profileTextLabel,
+        profilePhoto,
+         exitButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
         
         NSLayoutConstraint.activate([
             profilePhoto.topAnchor.constraint(equalTo: view.topAnchor, constant: 76.0),
