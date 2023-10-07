@@ -57,12 +57,20 @@ final class ProfileViewController: UIViewController {
     }
     
     @objc
-    func exitButtonTapped() {
+    private func exitButtonTapped() {
         
-        print("Exit button tapped ...")
+        OAuth2TokenStorage.shared.clearToken()
+        
+        guard let window = UIApplication.shared.windows.first else {
+            fatalError("Invalid UIApplication Configuration")
+        }
+            
+        let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: VCs.splashVC)
+            
+        window.rootViewController = tabBarController
     }
     
-    func setUpUI() {
+    private func setUpUI() {
         
         view.backgroundColor = UIColor(named: "YP Black")
         
