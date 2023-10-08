@@ -18,6 +18,8 @@ final class WebViewViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+//        navigationController?.navigationBar.barStyle = .black
+        
         progressView.progress = 0.0
         setUpWebView()
     }

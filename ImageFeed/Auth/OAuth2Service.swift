@@ -54,9 +54,11 @@ final class OAuth2Service {
         
         URLSession.shared.getData(for: request) { result in
             
+            let decoder = JSONDecoder()
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
+            
             let oauthResponse = result.flatMap { data in
-
-                Result {try JSONDecoder().decode(OAuthTokenResponseBody.self, from: data)}
+                Result {try decoder.decode(OAuthTokenResponseBody.self, from: data)}
             }
             
             completion(oauthResponse)

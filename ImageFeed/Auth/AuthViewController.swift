@@ -13,6 +13,8 @@ class AuthViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        navigationController?.navigationBar.barStyle = .black
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -22,6 +24,7 @@ class AuthViewController: UIViewController {
             guard let vc = segue.destination as? WebViewViewController else {
                fatalError("Не удалось подготовить переход на WebViewViewController")
             }
+            navigationController?.navigationBar.barStyle = .default
             vc.delegate = self
         }
     }
@@ -36,6 +39,7 @@ extension AuthViewController: WebViewViewControllerDelegate{
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         
+        navigationController?.navigationBar.barStyle = .black
         dismiss(animated: true)
     }
 }
