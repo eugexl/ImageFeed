@@ -10,31 +10,76 @@ import UIKit
 class AuthViewController: UIViewController {
     
     var delegate: SplashViewController?
+    
+    private let unsplashLogo: UIImageView = {
+        
+        let imageView = UIImageView(image: UIImage(named: NamedImages.unsplashLogo))
+        return imageView
+    }()
+    
+    private let enterButton: UIButton = {
+        
+        let button = UIButton()
+        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 18.0)
+        button.setTitle("Войти", for: .normal)
+        button.setTitleColor(UIColor(named: ColorNames.ypBlack), for: .normal)
+        button.layer.cornerRadius = 16.0
+        button.layer.masksToBounds = true
+        button.backgroundColor = UIColor(named: ColorNames.ypWhite)
+        
+        return button
+    }()
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        navigationController?.navigationBar.barStyle = .black
+        setUpUI()
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    private func setUpUI(){
         
-        if segue.identifier == Segues.showWebView {
-            
-            guard let vc = segue.destination as? WebViewViewController else {
-               fatalError("Не удалось подготовить переход на WebViewViewController")
-            }
-            navigationController?.navigationBar.barStyle = .default
-            vc.delegate = self
+        view.backgroundColor = UIColor(named: ColorNames.ypBlack)
+        
+        [unsplashLogo, enterButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
         }
+        unsplashLogo.heightAnchor.constraint(equalToConstant: 60.0).isActive = true
+        unsplashLogo.widthAnchor.constraint(equalToConstant: 60.0).isActive = true
+        unsplashLogo.topAnchor.constraint(equalTo: view.topAnchor, constant: 280.0).isActive = true
+        unsplashLogo.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        enterButton.heightAnchor.constraint(equalToConstant: 48.0).isActive = true
+        enterButton.widthAnchor.constraint(equalToConstant: 343.0).isActive = true
+        enterButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 640).isActive = true
+        enterButton.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        
+        enterButton.addTarget(self, action: #selector(presentWebView), for: .touchUpInside)
+    }
+    
+    @objc
+    private func presentWebView (){
+        
+        let webVC = WebViewViewController()
+        webVC.modalPresentationStyle = .fullScreen
+        webVC.delegate = self
+        
+       present(webVC, animated: true)
     }
 }
 
 extension AuthViewController: WebViewViewControllerDelegate{
     
+    
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
         
-        delegate?.authViewController(self, didAuthenticateWithCode: code)
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            delegate?.authViewController(self, didAuthenticateWithCode: code)
+        }
     }
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {

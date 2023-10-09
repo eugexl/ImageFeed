@@ -6,11 +6,12 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
     private let profilePhoto: UIImageView = {
-        let imageName = "ProfilePhoto"
+        let imageName = NamedImages.profileImagePlaceholder
         let imageView = UIImageView(image: UIImage(named: imageName))
         return imageView
     }()
@@ -46,6 +47,8 @@ final class ProfileViewController: UIViewController {
         return button
     }()
     
+    private var profileImageServiceObserver: NSObjectProtocol?
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -53,11 +56,35 @@ final class ProfileViewController: UIViewController {
     override func viewDidLoad() {
         
         setUpUI()
+        fillUpElements()
         exitButton.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
+        
+        profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.DidChangeNotification, object: nil, queue: .main, using: { [weak self] _ in
+            guard let self = self else { return }
+            
+            self.updateAvatar()
+        })
     }
     
     @objc
     private func exitButtonTapped() {
+        
+        let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
+        
+        let alertActionYes = UIAlertAction(title: "Да", style: .cancel) { _ in
+            self.leaveApp()
+        }
+        alert.addAction(alertActionYes)
+        
+        let alertActionNo = UIAlertAction(title: "Нет", style: .default)
+        alert.addAction(alertActionNo)
+        
+        alert.preferredAction = alertActionNo
+        
+        present(alert, animated: true)
+        
+    }
+    private func leaveApp() {
         
         OAuth2TokenStorage.shared.clearToken()
         
@@ -65,9 +92,19 @@ final class ProfileViewController: UIViewController {
             fatalError("Invalid UIApplication Configuration")
         }
             
-        let tabBarController = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: VCs.splashVC)
+        let splashViewontroller = SplashViewController()
             
-        window.rootViewController = tabBarController
+        window.rootViewController = splashViewontroller
+    }
+    
+    private func fillUpElements(){
+        
+        let profile = ProfileService.shared.profile
+        
+        nameLabel.text = profile?.name
+        userIdLabel.text = profile?.loginName
+        profileTextLabel.text = profile?.bio
+        updateAvatar()
     }
     
     private func setUpUI() {
@@ -99,5 +136,19 @@ final class ProfileViewController: UIViewController {
             exitButton.topAnchor.constraint(equalTo: view.topAnchor, constant: 86.0),
             exitButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0)
         ])
+    }
+    
+    private func updateAvatar() {
+        guard let profileImageURL = ProfileImageService.shared.avatarURL, let url = URL(string: profileImageURL) else {
+            print("Got problem with setting profile image (by URL)")
+            return
+        }
+        
+        let roundCornerEffect = RoundCornerImageProcessor(cornerRadius: 35)
+        profilePhoto.kf.indicatorType = .activity
+        profilePhoto.kf.setImage(with: url, placeholder: UIImage(named: NamedImages.profileImagePlaceholder) ,options: [.processor(roundCornerEffect),.cacheSerializer(FormatIndicatedCacheSerializer.png)])
+        
+        ImageCache.default.clearDiskCache()
+        ImageCache.default.clearMemoryCache()
     }
 }
