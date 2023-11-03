@@ -10,12 +10,7 @@ import UIKit
 class AuthViewController: UIViewController {
     
     var delegate: SplashViewController?
-    
-    private let unsplashLogo: UIImageView = {
-        
-        let imageView = UIImageView(image: UIImage(named: NamedImages.unsplashLogo))
-        return imageView
-    }()
+    static private(set) var gotAuthCode: Bool = false
     
     private let enterButton: UIButton = {
         
@@ -30,6 +25,12 @@ class AuthViewController: UIViewController {
         return button
     }()
     
+    private let unsplashLogo: UIImageView = {
+        
+        let imageView = UIImageView(image: UIImage(named: NamedImages.unsplashLogo))
+        return imageView
+    }()
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
@@ -38,6 +39,10 @@ class AuthViewController: UIViewController {
         super.viewDidLoad()
         
         setUpUI()
+    }
+    
+    deinit {
+        AuthViewController.gotAuthCode = false
     }
     
     private func setUpUI(){
@@ -73,8 +78,9 @@ class AuthViewController: UIViewController {
 
 extension AuthViewController: WebViewViewControllerDelegate{
     
-    
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code: String) {
+        
+        AuthViewController.gotAuthCode = true
         
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
@@ -84,7 +90,7 @@ extension AuthViewController: WebViewViewControllerDelegate{
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         
-        navigationController?.navigationBar.barStyle = .black
+//        navigationController?.navigationBar.barStyle = .black
         dismiss(animated: true)
     }
 }

@@ -17,25 +17,6 @@ final class SingleImageViewController: UIViewController {
         }
     }
     
-    private let scrollView: UIScrollView = {
-        
-        let sView = UIScrollView()
-        sView.minimumZoomScale = 0.1
-        sView.maximumZoomScale = 1.25
-        sView.contentMode = .scaleToFill
-        sView.backgroundColor = UIColor(named: ColorNames.ypBlack)
-        
-        return sView
-    }()
-    
-    private let imageView: UIImageView = {
-        
-        let iView = UIImageView()
-        iView.translatesAutoresizingMaskIntoConstraints = false
-        
-        return iView
-    }()
-    
     private let buttonBack: UIButton = {
         
         let button = UIButton()
@@ -50,6 +31,25 @@ final class SingleImageViewController: UIViewController {
         button.setImage(UIImage(named: NamedImages.buttonShare), for: .normal)
         
         return button
+    }()
+    
+    private let imageView: UIImageView = {
+        
+        let iView = UIImageView()
+        iView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return iView
+    }()
+    
+    private let scrollView: UIScrollView = {
+        
+        let sView = UIScrollView()
+        sView.minimumZoomScale = 0.1
+        sView.maximumZoomScale = 1.25
+        sView.contentMode = .scaleToFill
+        sView.backgroundColor = UIColor(named: ColorNames.ypBlack)
+        
+        return sView
     }()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {

@@ -9,11 +9,16 @@ import UIKit
 import WebKit
 
 final class WebViewViewController: UIViewController {
+    
+    weak var delegate: WebViewViewControllerDelegate?
 
-    private let webView: WKWebView = {
-        
-        return WKWebView()
+    private let backButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: NamedImages.authWebBackButton), for: .normal)
+        return button
     }()
+    
+    private var estimatedProgressObservation: NSKeyValueObservation?
     
     private let progressView: UIProgressView = {
         let progress = UIProgressView()
@@ -21,15 +26,10 @@ final class WebViewViewController: UIViewController {
         return progress
     }()
     
-    private let backButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: NamedImages.authWebBackButton), for: .normal)
-        return button
+    private let webView: WKWebView = {
+        
+        return WKWebView()
     }()
-    
-    weak var delegate: WebViewViewControllerDelegate?
-    
-    private var estimatedProgressObservation: NSKeyValueObservation?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -94,7 +94,7 @@ final class WebViewViewController: UIViewController {
     }
     
     private func updateProgress(){
-        progressView.progress = Float(webView.estimatedProgress)
+        progressView.setProgress(Float(webView.estimatedProgress), animated: true)
         progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
     }
 }

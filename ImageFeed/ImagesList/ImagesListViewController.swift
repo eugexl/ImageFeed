@@ -10,16 +10,18 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
-    private lazy var photosName: [String] = Array(0..<20).map{ "\($0)" }
-    private let singleImageSegue = "SingleImageSegue"
-    
     private lazy var dateFormatter: DateFormatter = {
         
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
+    
+    private lazy var photosName: [String] = Array(0..<20).map{ "\($0)" }
+    
+    private let singleImageSegue = "SingleImageSegue"
+    
     
     private var tableView: UITableView = {
         
@@ -27,6 +29,10 @@ final class ImagesListViewController: UIViewController {
         table.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
         return table
     }()
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .lightContent
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,16 +42,10 @@ final class ImagesListViewController: UIViewController {
         setUpUI()
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        
-        return .lightContent
-    }
-    
     private func setUpUI(){
         
         view.backgroundColor = UIColor(named: ColorNames.ypBlack)
         view.addSubview(tableView)
-        
         
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
         tableView.backgroundColor = UIColor(named: ColorNames.ypBlack)

@@ -19,17 +19,17 @@ final class ImagesListCell: UITableViewCell {
         return imageView
     }()
     
-    let likeButton: UIButton = {
-        let button = UIButton(type: .custom)
-        return button
-    }()
-   
     let dateLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(named: ColorNames.ypWhite)
         return label
     }()
     
+    let likeButton: UIButton = {
+        let button = UIButton(type: .custom)
+        return button
+    }()
+   
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -71,5 +71,4 @@ final class ImagesListCell: UITableViewCell {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
 }

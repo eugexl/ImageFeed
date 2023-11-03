@@ -10,10 +10,11 @@ import Foundation
 final class OAuth2Service {
     
     static let shared = OAuth2Service()
-    private init() {}
     
-    private var task: URLSessionTask?
     private var lastCode: String?
+    private var task: URLSessionTask?
+    
+    private init() {}
     
     func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         

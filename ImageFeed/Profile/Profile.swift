@@ -9,12 +9,12 @@ import Foundation
 
 struct Profile {
     
-    var username: String
-    var name: String
+    var bio: String
     var loginName: String {
         get {
             return "@\(username)"
         }
     }
-    var bio: String
+    var name: String
+    var username: String
 }

@@ -9,7 +9,7 @@ import Foundation
 
 /// Описание сетевых ошибок
 enum NetworkError: Error {
-    case httpStatusCode(Int)
     case httpResponseError
+    case httpStatusCode(Int)
     case noDataError
 }

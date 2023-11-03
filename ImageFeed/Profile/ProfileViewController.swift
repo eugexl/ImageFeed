@@ -10,10 +10,11 @@ import Kingfisher
 
 final class ProfileViewController: UIViewController {
     
-    private let profilePhoto: UIImageView = {
-        let imageName = NamedImages.profileImagePlaceholder
-        let imageView = UIImageView(image: UIImage(named: imageName))
-        return imageView
+    private let exitButton: UIButton = {
+        let exitButtonImage = "ExitButton"
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(named: exitButtonImage), for: .normal)
+        return button
     }()
     
     private let nameLabel: UILabel = {
@@ -24,12 +25,10 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private let userIdLabel: UILabel = {
-        let label = UILabel()
-        label.text = "@ekaterina_nov"
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = UIColor(named: "YP Gray")
-        return label
+    private let profilePhoto: UIImageView = {
+        let imageName = NamedImages.profileImagePlaceholder
+        let imageView = UIImageView(image: UIImage(named: imageName))
+        return imageView
     }()
     
     private let profileTextLabel: UILabel = {
@@ -40,11 +39,12 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private let exitButton: UIButton = {
-        let exitButtonImage = "ExitButton"
-        let button = UIButton(type: .custom)
-        button.setImage(UIImage(named: exitButtonImage), for: .normal)
-        return button
+    private let userIdLabel: UILabel = {
+        let label = UILabel()
+        label.text = "@ekaterina_nov"
+        label.font = UIFont.systemFont(ofSize: 13)
+        label.textColor = UIColor(named: "YP Gray")
+        return label
     }()
     
     private var profileImageServiceObserver: NSObjectProtocol?
@@ -59,7 +59,7 @@ final class ProfileViewController: UIViewController {
         fillUpElements()
         exitButton.addTarget(self, action: #selector(exitButtonTapped), for: .touchUpInside)
         
-        profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.DidChangeNotification, object: nil, queue: .main, using: { [weak self] _ in
+        profileImageServiceObserver = NotificationCenter.default.addObserver(forName: ProfileImageService.didChangeNotification, object: nil, queue: .main, using: { [weak self] _ in
             guard let self = self else { return }
             
             self.updateAvatar()
@@ -71,7 +71,9 @@ final class ProfileViewController: UIViewController {
         
         let alert = UIAlertController(title: "Пока, пока!", message: "Уверены что хотите выйти?", preferredStyle: .alert)
         
-        let alertActionYes = UIAlertAction(title: "Да", style: .cancel) { _ in
+        let alertActionYes = UIAlertAction(title: "Да", style: .cancel) { [weak self] _ in
+            
+            guard let self = self else { return }
             self.leaveApp()
         }
         alert.addAction(alertActionYes)
@@ -84,6 +86,17 @@ final class ProfileViewController: UIViewController {
         present(alert, animated: true)
         
     }
+    
+    private func fillUpElements(){
+        
+        let profile = ProfileService.shared.profile
+        
+        nameLabel.text = profile?.name
+        userIdLabel.text = profile?.loginName
+        profileTextLabel.text = profile?.bio
+        updateAvatar()
+    }
+    
     private func leaveApp() {
         
         OAuth2TokenStorage.shared.clearToken()
@@ -95,16 +108,6 @@ final class ProfileViewController: UIViewController {
         let splashViewontroller = SplashViewController()
             
         window.rootViewController = splashViewontroller
-    }
-    
-    private func fillUpElements(){
-        
-        let profile = ProfileService.shared.profile
-        
-        nameLabel.text = profile?.name
-        userIdLabel.text = profile?.loginName
-        profileTextLabel.text = profile?.bio
-        updateAvatar()
     }
     
     private func setUpUI() {

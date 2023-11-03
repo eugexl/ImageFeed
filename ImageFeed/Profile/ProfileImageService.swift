@@ -11,13 +11,14 @@ import UIKit
 final class ProfileImageService {
     
     static let shared = ProfileImageService()
-    private init() {}
+    
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     
     private (set) var avatarURL: String?
     
     private var task: URLSessionTask?
     
-    static let DidChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    private init() {}
     
     func fetchProfileImageURL(of username: String, _ completion: @escaping (Result<String, Error>) -> Void) {
         
@@ -39,13 +40,13 @@ final class ProfileImageService {
                 
                 self.avatarURL = avatarURL
                 
-                NotificationCenter.default.post(name: ProfileImageService.DidChangeNotification, object: self, userInfo: ["URL": avatarURL])
+                NotificationCenter.default.post(name: ProfileImageService.didChangeNotification, object: self, userInfo: ["URL": avatarURL])
                 
                 completion(.success( avatarURL ))
                 
                 
             case .failure(let error):
-                print(error)
+                
                 completion(.failure(error))
             }
         }

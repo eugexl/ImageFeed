@@ -8,7 +8,6 @@
 import UIKit
 
 class SplashViewController: UIViewController {
-
     
     private let splashScreenLogo: UIImageView = {
         
@@ -17,11 +16,11 @@ class SplashViewController: UIViewController {
         return imageView
     }()
     
+    private var token: String?
+    
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
     }
-    
-    private var token: String?
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -29,10 +28,8 @@ class SplashViewController: UIViewController {
         if OAuth2TokenStorage.shared.token != nil {
             fetchProfile()
         } else {
-            let authVC = AuthViewController()
-            authVC.modalPresentationStyle = .fullScreen
-            authVC.delegate = self
-            present(authVC, animated: true, completion: nil)
+            guard AuthViewController.gotAuthCode == false else { return }
+            authoriseUser()
         }
     }
     
@@ -40,6 +37,13 @@ class SplashViewController: UIViewController {
         super.viewDidLoad()
         
         setUpUI()
+    }
+    
+    private func authoriseUser(){
+        let authVC = AuthViewController()
+        authVC.modalPresentationStyle = .fullScreen
+        authVC.delegate = self
+        present(authVC, animated: true, completion: nil)
     }
     
     private func setUpUI(){
@@ -65,8 +69,10 @@ class SplashViewController: UIViewController {
 }
 
 extension SplashViewController: AuthViewControllerDelegate {
+    
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
        
+        vc.dismiss(animated: true)
         
         dismiss(animated: true) { [weak self] in
             
@@ -82,17 +88,28 @@ extension SplashViewController: AuthViewControllerDelegate {
                     OAuth2TokenStorage.shared.token = token
                     self.fetchProfile()
                     
-                case .failure(let error):
+                case .failure( _ ):
                     
                     UIBlockingProgressHUD.dismiss()
-    //  Обработать ошибку
-                    print(error)
+                    
+                    let alert = UIAlertController(title: "Что-то пошло не так!", message: "Не удалось войти в систему.", preferredStyle: .alert)
+                    
+                    let action = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
+                        guard let self = self else { return }
+                        self.authoriseUser()
+                    }
+                    
+                    alert.addAction(action)
+                    
+                    self.present(alert, animated: true)
                 }
             }
         }
     }
     
     private func fetchProfile() {
+        
+        UIBlockingProgressHUD.show()
         
         ProfileService.shared.fetchProfile() { [weak self] result in
             
@@ -107,17 +124,21 @@ extension SplashViewController: AuthViewControllerDelegate {
                 
             case .failure( _ ):
                 
-                let alert = UIAlertController(title: "Что-то пошло не так!", message: "Не удалось войти в систему", preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: "OK", style: .cancel))
+                let alert = UIAlertController(title: "Что-то пошло не так!", message: "Не удалось получить данные с сервера.", preferredStyle: .alert)
+                
+                let action = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
+                    guard let self = self else { return }
+                    self.fetchProfile()
+                }
+                
+                alert.addAction(action)
+                
                 self.present(alert, animated: true)
                 
                 UIBlockingProgressHUD.dismiss()
                 
-                // Fix it later
-                
                 break
             }
-            
         }
     }
 }

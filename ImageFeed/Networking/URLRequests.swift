@@ -8,14 +8,16 @@
 import Foundation
 
 struct URLRequests {
+    
     static let shared = URLRequests()
-    private init() {}
     
     private var token: String {
         get {
             return OAuth2TokenStorage.shared.token ?? ""
         }
     }
+    
+    private init() {}
     
     func authTokenRequest(code: String) -> URLRequest {
         
