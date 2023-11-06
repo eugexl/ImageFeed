@@ -10,58 +10,41 @@ import Foundation
 final class OAuth2Service {
     
     static let shared = OAuth2Service()
+    
+    private var lastCode: String?
+    private var task: URLSessionTask?
+    
     private init() {}
     
     func fetchAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         
-        let authTokenRequest =  authTokenRequest(code: code)
+        assert(Thread.isMainThread)
         
-        oauthQuery(with: authTokenRequest) { result in
+        if lastCode == code { return }
+        task?.cancel()
+        lastCode = code
+        
+        let authTokenRequest =  URLRequests.shared.authTokenRequest(code: code)
+         
+        let task = URLSession.shared.objectTask(for: authTokenRequest) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+            
+            guard let self = self else { return }
             
             switch result {
                 
             case .success(let authBody):
                 
                 completion(.success(authBody.accessToken))
+                self.task = nil
+                self.lastCode = nil
                 
             case .failure(let error):
                 
                 completion(.failure(error))
             }
         }
-    }
-    
-    private func authTokenRequest(code: String) -> URLRequest {
         
-        var urlComponents = URLComponents(string: UnsplashData.tokenRequestURLString)!
-        
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: UnsplashData.accessKey),
-            URLQueryItem(name: "client_secret", value: UnsplashData.secretKey),
-            URLQueryItem(name: "redirect_uri", value: UnsplashData.redirectURI),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "grant_type", value: "authorization_code")
-        ]
-        
-        var request = URLRequest(url: urlComponents.url!)
-        
-        request.httpMethod = UnsplashData.postMethod
-        
-        return request
-    }
-    
-    private func oauthQuery(with request: URLRequest, completion: @escaping (Result <OAuthTokenResponseBody, Error>) -> Void) {
-        
-        URLSession.shared.getData(for: request) { result in
-            
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-            
-            let oauthResponse = result.flatMap { data in
-                Result {try decoder.decode(OAuthTokenResponseBody.self, from: data)}
-            }
-            
-            completion(oauthResponse)
-        }
+        self.task = task
+        task.resume()
     }
 }

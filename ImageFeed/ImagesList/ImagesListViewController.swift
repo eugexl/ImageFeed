@@ -10,39 +10,54 @@ import UIKit
 
 final class ImagesListViewController: UIViewController {
     
-    private lazy var photosName: [String] = Array(0..<20).map{ "\($0)" }
-    private let singleImageSegue = "SingleImageSegue"
-    
     private lazy var dateFormatter: DateFormatter = {
+        
         let formatter = DateFormatter()
-        formatter.dateStyle = .long
-        formatter.timeStyle = .none
+        formatter.dateFormat = "dd MMMM yyyy"
+        formatter.locale = Locale(identifier: "ru_RU")
         return formatter
     }()
     
-    @IBOutlet private var tableView: UITableView!
+    private lazy var photosName: [String] = Array(0..<20).map{ "\($0)" }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    private let singleImageSegue = "SingleImageSegue"
+    
+    
+    private var tableView: UITableView = {
         
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        
-    }
+        let table = UITableView()
+        table.register(ImagesListCell.self, forCellReuseIdentifier: ImagesListCell.reuseIdentifier)
+        return table
+    }()
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        if segue.identifier == singleImageSegue {
-            let viewController = segue.destination as! SingleImageViewController
-            let indexPath = sender as! IndexPath
-            let image = UIImage(named: photosName[indexPath.row])
-            viewController.image = image
-        } else {
-            super.prepare(for: segue, sender: sender)
-        }
+        tableView.dataSource = self
+        tableView.delegate = self
+        setUpUI()
+    }
+    
+    private func setUpUI(){
+        
+        view.backgroundColor = UIColor(named: ColorNames.ypBlack)
+        view.addSubview(tableView)
+        
+        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+        tableView.backgroundColor = UIColor(named: ColorNames.ypBlack)
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.contentMode = .scaleToFill
+        
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.topAnchor),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 }
 
@@ -52,7 +67,7 @@ extension ImagesListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
         guard let image = UIImage(named: String(indexPath.row)) else {
-            return 0
+            return 0.0
         }
         
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
@@ -65,7 +80,15 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        performSegue(withIdentifier: singleImageSegue, sender: indexPath)
+        
+        let imageVC = SingleImageViewController()
+        let image = UIImage(named: photosName[indexPath.row])
+        
+        imageVC.image = image
+        imageVC.modalPresentationStyle = .fullScreen
+        
+        self.present(imageVC, animated: true)
+        
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }

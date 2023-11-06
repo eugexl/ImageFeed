@@ -9,9 +9,9 @@ import Foundation
 
 extension URLSession {
     
-    func getData(for request: URLRequest, completion: @escaping (Result<Data, Error>) -> Void) {
+    func objectTask<DataT: Decodable>(for request: URLRequest, completion: @escaping (Result<DataT, Error>) -> Void) -> URLSessionTask {
         
-        let execCompletion: (Result<Data, Error>) -> Void = { result in
+        let executeCompletion: (Result<DataT, Error>) -> Void = { result in
             DispatchQueue.main.async {
                 completion(result)
             }
@@ -32,13 +32,18 @@ extension URLSession {
                     throw NetworkError.noDataError
                 }
                 
-                execCompletion(.success(data))
+                let decoder = JSONDecoder()
+                decoder.keyDecodingStrategy = .convertFromSnakeCase
+                
+                let decodeData = try decoder.decode(DataT.self, from: data)
+                
+                executeCompletion(.success(decodeData))
                 
             } catch {
-                execCompletion(.failure(error))
+                executeCompletion(.failure(error))
             }
         }
         
-        task.resume()
+        return task
     }
 }

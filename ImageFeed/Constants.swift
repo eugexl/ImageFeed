@@ -20,17 +20,35 @@ struct UnsplashData {
     static let authorizeURLString = "https://unsplash.com/oauth/authorize"
     static let tokenRequestURLString = "https://unsplash.com/oauth/token"
     
-    static let postMethod = "POST"
-}
-
-struct Segues {
+    static let getMeRequestURL = URL(string: "https://api.unsplash.com/me")
+    static func getUserDataRequestURL(of username: String) -> URL? {
+        return URL(string: "https://api.unsplash.com/users/\(username)")
+    }
     
-    static let showWebView  = "ShowWebView"
-    static let showAuthVC   = "ShowAuthViewController"
+    static let postMethod = "POST"
 }
 
 struct VCs {
     
-    static let splashVC = "SplashViewController"
     static let tabBarVC = "TabBarViewController"
+}
+
+struct NamedImages {
+    static let authWebBackButton = "AuthWebBackButton"
+    static let buttonBack = "BackButtonChevron"
+    static let buttonShare = "SharingButton"
+    static let likeButtonActive = "Active"
+    static let likeButtonNoActive = "NoActive"
+    static let profileImagePlaceholder = "ProfileImagePlaceholder"
+    static let splashScreenLogoImage = "LaunchLogo"
+    static let tabBarItemImageList = "TabBarIconImageList"
+    static let tabBarItemProfile = "TabBarIconProfile"
+    static let unsplashLogo = "UnsplashLogoWhite"
+}
+
+struct ColorNames {
+   static let ypBlack = "YP Black"
+   static let ypBackground = "YP Background"
+   static let ypGray = "YP Gray"
+   static let ypWhite = "YP White"
 }
