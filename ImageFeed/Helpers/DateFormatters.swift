@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+
+struct DateFormatters {
+    
+    static let iso8601DateFormatter = ISO8601DateFormatter()
+}

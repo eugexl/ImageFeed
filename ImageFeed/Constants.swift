@@ -25,6 +25,10 @@ struct UnsplashData {
         return URL(string: "https://api.unsplash.com/users/\(username)")
     }
     
+    static func getPhotoListURL(page num: Int) -> URL? {
+        return URL(string: "https://api.unsplash.com/photos?page=\(num)")
+    }
+    
     static let postMethod = "POST"
 }
 
@@ -51,4 +55,8 @@ struct ColorNames {
    static let ypBackground = "YP Background"
    static let ypGray = "YP Gray"
    static let ypWhite = "YP White"
+}
+
+struct NotificationNames {
+    static let imagesListServiceDidChange = "ImagesListServiceDidChange"
 }

@@ -6,3 +6,9 @@
 //
 
 import Foundation
+
+struct PhotoURLs: Decodable {
+    
+    let full: String
+    let thumb: String
+}

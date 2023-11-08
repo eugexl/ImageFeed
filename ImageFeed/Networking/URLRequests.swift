@@ -48,10 +48,22 @@ struct URLRequests {
         return request
     }
     
-    func userDataRequest(of username: String) ->URLRequest {
+    func userDataRequest(of username: String) -> URLRequest {
         
         guard let url = UnsplashData.getUserDataRequestURL(of: username) else {
             fatalError("Couldn''t create URL for GETting me-profile data")
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
+    }
+    
+    func photoListRequest(page num: Int) -> URLRequest {
+        
+        guard let url = UnsplashData.getPhotoListURL(page: num) else {
+            fatalError("Couldn''t create URL for GETting page list data")
         }
         
         var request = URLRequest(url: url)

@@ -26,7 +26,11 @@ class SplashViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if OAuth2TokenStorage.shared.token != nil {
+            
+            ImageListService.shared.fetchPhotosNextPage()
+            
             fetchProfile()
+            
         } else {
             guard AuthViewController.gotAuthCode == false else { return }
             authoriseUser()
