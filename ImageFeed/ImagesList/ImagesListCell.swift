@@ -35,7 +35,6 @@ final class ImagesListCell: UITableViewCell {
         
         contentMode = .scaleToFill
         backgroundColor = UIColor(named: ColorNames.ypBlack)
-        
         shouldIndentWhileEditing = true
         
         contentView.contentMode = .scaleToFill
@@ -70,5 +69,11 @@ final class ImagesListCell: UITableViewCell {
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        cellImage.kf.cancelDownloadTask()
     }
 }

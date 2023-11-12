@@ -27,8 +27,6 @@ class SplashViewController: UIViewController {
         
         if OAuth2TokenStorage.shared.token != nil {
             
-            ImageListService.shared.fetchPhotosNextPage()
-            
             fetchProfile()
             
         } else {

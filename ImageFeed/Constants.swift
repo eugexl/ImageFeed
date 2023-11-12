@@ -45,6 +45,7 @@ struct NamedImages {
     static let likeButtonNoActive = "NoActive"
     static let profileImagePlaceholder = "ProfileImagePlaceholder"
     static let splashScreenLogoImage = "LaunchLogo"
+    static let stubPhoto = "StubPhoto"
     static let tabBarItemImageList = "TabBarIconImageList"
     static let tabBarItemProfile = "TabBarIconProfile"
     static let unsplashLogo = "UnsplashLogoWhite"

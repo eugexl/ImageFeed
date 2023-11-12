@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 final class ImagesListViewController: UIViewController {
     
@@ -20,8 +21,11 @@ final class ImagesListViewController: UIViewController {
     
     private lazy var photosName: [String] = Array(0..<20).map{ "\($0)" }
     
+    private var photos: [Photo] = []
+    
     private let singleImageSegue = "SingleImageSegue"
     
+    private var timeToFetchPhotos: Int = 0
     
     private var tableView: UITableView = {
         
@@ -39,6 +43,15 @@ final class ImagesListViewController: UIViewController {
         
         tableView.dataSource = self
         tableView.delegate = self
+        
+        NotificationCenter.default.addObserver(forName: ImageListService.DidChangeNotification,
+                                               object: nil,
+                                               queue: .main) { [weak self] _ in
+            guard let self = self else { return }
+            self.updateTableViewAnimated()
+        }
+        
+        ImageListService.shared.fetchPhotosNextPage()
         setUpUI()
     }
     
@@ -59,6 +72,26 @@ final class ImagesListViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
     }
+    
+    private func updateTableViewAnimated() {
+        
+        let oldPhotosNum = photos.count
+        photos = ImageListService.shared.photos
+        let newPhotosNum = photos.count
+        
+        timeToFetchPhotos = photos.count - 1
+        
+        if newPhotosNum > oldPhotosNum {
+            
+            tableView.performBatchUpdates {
+                let indexPaths: [IndexPath] = (oldPhotosNum..<newPhotosNum).map { i in
+                    return IndexPath(row: i, section: 0)
+                }
+                
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            }
+        }
+    }
 }
 
 // MARK: - TableView Delegate Extension
@@ -66,15 +99,12 @@ extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        guard let image = UIImage(named: String(indexPath.row)) else {
-            return 0.0
-        }
+        let photoInfo = photos[indexPath.row]
         
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
-        let imageWidth = image.size.width
-        let aspectScale = imageViewWidth / imageWidth
-        let cellHeight = image.size.height * aspectScale + imageInsets.top + imageInsets.bottom
+        let aspectScale = imageViewWidth / photoInfo.size.width
+        let cellHeight = photoInfo.size.height * aspectScale + imageInsets.top + imageInsets.bottom
         
         return cellHeight
     }
@@ -86,10 +116,16 @@ extension ImagesListViewController: UITableViewDelegate {
         
         imageVC.image = image
         imageVC.modalPresentationStyle = .fullScreen
-        
         self.present(imageVC, animated: true)
         
         tableView.deselectRow(at: indexPath, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        
+        if indexPath.row == timeToFetchPhotos {
+            ImageListService.shared.fetchPhotosNextPage()
+        }
     }
 }
 
@@ -97,7 +133,9 @@ extension ImagesListViewController: UITableViewDelegate {
 extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return photosName.count
+        //        return photosName.count
+        
+        return photos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -116,12 +154,22 @@ extension ImagesListViewController: UITableViewDataSource {
     /// Настраиваем отображение ячейки таблицы
     func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         
-        guard let image = UIImage(named: String(indexPath.row)) else {
+        let photoInfo = ImageListService.shared.photos[indexPath.row]
+        
+        guard let url = URL(string: photoInfo.thumbImageURL), let createdAt = photoInfo.createdAt else {
+            
+            print("ImageListViewController, configCell: Не получилось подготовить данные для ячейки таблицы")
             return
         }
         
-        cell.cellImage.image = image
-        cell.dateLabel.text = dateFormatter.string(from: Date())
+        cell.cellImage.kf.indicatorType = .activity
+        cell.cellImage.kf.setImage(with: url, placeholder: UIImage(named: NamedImages.stubPhoto)) { [weak self] _ in
+            
+            guard let self = self else { return }
+            self.tableView.reloadRows(at: [indexPath], with: .automatic)
+        }
+       
+        cell.dateLabel.text = DateFormatters.imageListDateFormatter.string(from: createdAt)
         
         let likeImage = indexPath.row % 2 == 0 ? UIImage(named: "Active") : UIImage(named: "No Active")
         

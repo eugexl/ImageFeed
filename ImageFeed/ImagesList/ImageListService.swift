@@ -23,11 +23,13 @@ final class ImageListService {
     
     func fetchPhotosNextPage() {
         
+        guard task == nil else {
+            return
+        }
+        
         assert(Thread.isMainThread)
         
         let nextPage = lastLoadedPage + 1
-        
-        task?.cancel()
         
         let request = URLRequests.shared.photoListRequest(page: nextPage)
         
@@ -41,11 +43,15 @@ final class ImageListService {
                 photos.append(contentsOf: photoList)
                 lastLoadedPage += 1
                 
+                NotificationCenter.default.post(name: ImageListService.DidChangeNotification, object: nil)
+                
             case .failure(let error):
                 
-                print("GOT ERROR: ")
+                print("ImageListService.fetchPhotosNextPage, got error: ")
                 print(error)
             }
+            
+            self.task = nil
         }
         
         self.task = task
