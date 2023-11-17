@@ -26,9 +26,7 @@ class SplashViewController: UIViewController {
         super.viewDidAppear(animated)
         
         if OAuth2TokenStorage.shared.token != nil {
-            
             fetchProfile()
-            
         } else {
             guard AuthViewController.gotAuthCode == false else { return }
             authoriseUser()
@@ -42,6 +40,7 @@ class SplashViewController: UIViewController {
     }
     
     private func authoriseUser(){
+        
         let authVC = AuthViewController()
         authVC.modalPresentationStyle = .fullScreen
         authVC.delegate = self
@@ -94,16 +93,10 @@ extension SplashViewController: AuthViewControllerDelegate {
                     
                     UIBlockingProgressHUD.dismiss()
                     
-                    let alert = UIAlertController(title: "Что-то пошло не так!", message: "Не удалось войти в систему.", preferredStyle: .alert)
-                    
-                    let action = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
-                        guard let self = self else { return }
-                        self.authoriseUser()
-                    }
-                    
-                    alert.addAction(action)
-                    
-                    self.present(alert, animated: true)
+                    let alertActions = [
+                        UIAlertAction(title: "ОК", style: .cancel) { _ in self.authoriseUser() }
+                    ]
+                    AlertPresenter.shared.presentAlert(title: "Что-то пошло не так!", message: "Не удалось войти в систему.", actions: alertActions, target: self)
                 }
             }
         }
@@ -126,16 +119,14 @@ extension SplashViewController: AuthViewControllerDelegate {
                 
             case .failure( _ ):
                 
-                let alert = UIAlertController(title: "Что-то пошло не так!", message: "Не удалось получить данные с сервера.", preferredStyle: .alert)
+                let alertActions = [
+                    UIAlertAction(title: "ОК", style: .cancel) { _ in self.fetchProfile() }
+                ]
                 
-                let action = UIAlertAction(title: "OK", style: .cancel) { [weak self] _ in
-                    guard let self = self else { return }
-                    self.fetchProfile()
-                }
-                
-                alert.addAction(action)
-                
-                self.present(alert, animated: true)
+                AlertPresenter.shared.presentAlert(title: "Что-то пошло не так!",
+                                                message: "Не удалось получить данные с сервера.",
+                                                actions: alertActions,
+                                                target: self)
                 
                 UIBlockingProgressHUD.dismiss()
                 

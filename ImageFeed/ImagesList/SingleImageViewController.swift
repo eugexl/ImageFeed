@@ -9,13 +9,8 @@ import UIKit
 
 final class SingleImageViewController: UIViewController {
     
-    var image: UIImage! {
-        didSet {
-            guard isViewLoaded else { return }
-            imageView.image = image
-            rescaleAndCenterImageInScrollView(image: image)
-        }
-    }
+    
+    var imageURL: URL?
     
     private let buttonBack: UIButton = {
         
@@ -63,8 +58,7 @@ final class SingleImageViewController: UIViewController {
         
         setUpUI()
         
-        imageView.image = image
-        rescaleAndCenterImageInScrollView(image: image)
+        setImage()
     }
     
     @objc
@@ -76,8 +70,39 @@ final class SingleImageViewController: UIViewController {
     @objc
     private func didTapShareButton(_ sender: Any) {
         
-        let activityController = UIActivityViewController(activityItems: [image ?? UIImage()], applicationActivities: nil)
+        let activityController = UIActivityViewController(activityItems: [imageView.image ?? UIImage()], applicationActivities: nil)
         present(activityController, animated: true)
+    }
+    
+    private func setImage(){
+        
+        guard let url = imageURL else {
+            
+            DispatchQueue.main.async {
+                    let alertAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+                        self?.dismiss(animated: true)
+                    }
+                    AlertPresenter.shared.presentAlert(title: "Что-то пошло не так", message: "Не удалось загрузить изображение", actions: [alertAction], target: self)
+            }
+            return
+        }
+                
+        UIBlockingProgressHUD.show()
+                
+        imageView.kf.setImage(with: url) { [weak self] result in
+            UIBlockingProgressHUD.dismiss()
+                    
+            guard let self = self else { return }
+                    
+            switch result {
+            case .success(let imageData):
+                        
+                self.rescaleAndCenterImageInScrollView(image: imageData.image)
+                        
+            case .failure:
+                showError()
+            }
+        }
     }
     
     private func setUpUI(){
@@ -115,6 +140,18 @@ final class SingleImageViewController: UIViewController {
         buttonShare.addTarget(self, action: #selector(didTapShareButton), for: .touchUpInside)
     }
     
+    private func showError(){
+        let actions = [
+            UIAlertAction(title: "Не надо", style: .cancel){ [weak self] _ in
+                self?.dismiss(animated: true)
+            },
+            UIAlertAction(title: "Повторить", style: .default) { [weak self] _ in
+                self?.setImage()
+            }
+        ]
+        AlertPresenter.shared.presentAlert(title: "Что-то пошло не так", message: "Попробовать ещё раз?", actions: actions, target: self)
+    }
+    
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
         
         view.layoutIfNeeded()
@@ -126,17 +163,7 @@ final class SingleImageViewController: UIViewController {
         let vScale = visibleRectSize.height / imageSize.height
         
         let minZoomScale = scrollView.minimumZoomScale
-//        let maxZoomScale = scrollView.maximumZoomScale
-        
-        // На этапе выполнения задачи 9-го спринта, для растягивания мелких моковых картинок до ширины/высоты экрана устройства (согласно ТЗ) >>>
-        var maxZoomScale: CGFloat
-        if hScale > 0 && vScale > 0 {
-            maxZoomScale = hScale > vScale ? hScale : vScale
-            scrollView.maximumZoomScale = maxZoomScale
-        } else {
-            maxZoomScale = scrollView.maximumZoomScale
-        }
-        // <<<
+        let maxZoomScale = scrollView.maximumZoomScale
         
         let scale = min(maxZoomScale, max(minZoomScale, max(hScale, vScale)))
         

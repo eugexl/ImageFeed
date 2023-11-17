@@ -90,7 +90,6 @@ extension AuthViewController: WebViewViewControllerDelegate{
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         
-//        navigationController?.navigationBar.barStyle = .black
         dismiss(animated: true)
     }
 }

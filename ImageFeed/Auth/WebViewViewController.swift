@@ -107,6 +107,9 @@ extension WebViewViewController: WKNavigationDelegate {
             
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
             
+            // Зачишаем cookie
+            HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+            
             // Чистим кэшированные данные, чтоб после Логаута в приложении страница авторизации Unsplash заново запрашивала параметры (эл. адрес / пароль) пользователя.
             WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { webData in
                 webData.forEach { data in

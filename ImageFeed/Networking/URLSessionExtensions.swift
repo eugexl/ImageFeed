@@ -40,6 +40,7 @@ extension URLSession {
                 executeCompletion(.success(decodeData))
                 
             } catch {
+                
                 executeCompletion(.failure(error))
             }
         }

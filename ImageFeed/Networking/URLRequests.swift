@@ -32,7 +32,7 @@ struct URLRequests {
         ]
         
         var request = URLRequest(url: urlComponents.url!)
-        request.httpMethod = UnsplashData.postMethod
+        request.httpMethod = UnsplashData.httpMethodPost
         return request
     }
     
@@ -68,6 +68,19 @@ struct URLRequests {
         
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
+        return request
+    }
+    
+    func photoLike(photoId: String, isLike: Bool) -> URLRequest {
+        
+        guard let url = UnsplashData.likePhotoURL(photoId: photoId) else {
+            fatalError("URLRequests.photoLike: Не получилось создать URL для запроса photo/:id/like")
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = isLike ? UnsplashData.httpMethodPost : UnsplashData.httpMethodDelete
         
         return request
     }

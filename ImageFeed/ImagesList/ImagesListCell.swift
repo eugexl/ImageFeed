@@ -9,11 +9,11 @@ import UIKit
 
 final class ImagesListCell: UITableViewCell {
     
-   static let reuseIdentifier = "ImagesListCell"
+    static let reuseIdentifier = "ImagesListCell"
     
     let cellImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.layer.cornerRadius = 16.0
+        imageView.layer.cornerRadius = 8.0
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleToFill
         return imageView
@@ -29,6 +29,8 @@ final class ImagesListCell: UITableViewCell {
         let button = UIButton(type: .custom)
         return button
     }()
+
+    weak var delegate: ImagesListCellDelegate?
    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -65,6 +67,7 @@ final class ImagesListCell: UITableViewCell {
             likeButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16.0)
             
         ])
+        likeButton.addTarget(self, action: #selector(buttonLikeTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -75,5 +78,17 @@ final class ImagesListCell: UITableViewCell {
         super.prepareForReuse()
         
         cellImage.kf.cancelDownloadTask()
+    }
+    
+    @objc
+    private func buttonLikeTapped(){
+        
+        delegate?.imagesListCellDidTapLike(on: self)
+    }
+    
+    func setIsLiked(state: Bool) {
+        
+        let likeImage = state ? UIImage(named: "Active") : UIImage(named: "No Active")
+        likeButton.setImage(likeImage, for: .normal)
     }
 }
