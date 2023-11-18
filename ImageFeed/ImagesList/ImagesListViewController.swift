@@ -165,7 +165,7 @@ extension ImagesListViewController: UITableViewDataSource {
             
             cell.cellImage.image = UIImage(named: NamedImages.stubPhoto)
         }
-            
+        
         if let createdAt = photoInfo.createdAt {
             
             cell.dateLabel.text = DateFormatters.imageListDateFormatter.string(from: createdAt)
@@ -203,7 +203,12 @@ extension ImagesListViewController: ImagesListCellDelegate {
             case .failure:
                 
                 let action = UIAlertAction(title: "ОК", style: .cancel)
-                AlertPresenter.shared.presentAlert(title: "Что-то пошло не так!", message: "К сожалению, не удалось поставить лайк данному изображению", actions: [action], target: self)
+                AlertPresenter.shared.presentAlert(
+                    title: "Что-то пошло не так!",
+                    message: "К сожалению, не удалось поставить лайк данному изображению",
+                    actions: [action],
+                    target: self
+                )
             }
             
             UIBlockingProgressHUD.dismiss()

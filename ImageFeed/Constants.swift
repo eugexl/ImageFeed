@@ -58,10 +58,10 @@ struct NamedImages {
 }
 
 struct ColorNames {
-   static let ypBackground = "YP Background"
-   static let ypBlack = "YP Black"
-   static let ypGray = "YP Gray"
-   static let ypWhite = "YP White"
+    static let ypBackground = "YP Background"
+    static let ypBlack = "YP Black"
+    static let ypGray = "YP Gray"
+    static let ypWhite = "YP White"
 }
 
 struct NotificationNames {

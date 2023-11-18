@@ -29,9 +29,9 @@ final class ImagesListCell: UITableViewCell {
         let button = UIButton(type: .custom)
         return button
     }()
-
+    
     weak var delegate: ImagesListCellDelegate?
-   
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -43,9 +43,9 @@ final class ImagesListCell: UITableViewCell {
         contentView.clipsToBounds = true
         
         [
-        cellImage,
-        likeButton,
-        dateLabel
+            cellImage,
+            likeButton,
+            dateLabel
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)

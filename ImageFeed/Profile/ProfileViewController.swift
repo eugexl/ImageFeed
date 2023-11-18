@@ -99,14 +99,18 @@ final class ProfileViewController: UIViewController {
     
     private func leaveApp() {
         
+        // Зачишаем cookie
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        
+        // Удаляем токен доступа к API
         OAuth2TokenStorage.shared.clearToken()
         
         guard let window = UIApplication.shared.windows.first else {
             fatalError("Invalid UIApplication Configuration")
         }
-            
+        
         let splashViewontroller = SplashViewController()
-            
+        
         window.rootViewController = splashViewontroller
     }
     
@@ -115,9 +119,9 @@ final class ProfileViewController: UIViewController {
         view.backgroundColor = UIColor(named: "YP Black")
         
         [nameLabel,
-        userIdLabel,
-        profileTextLabel,
-        profilePhoto,
+         userIdLabel,
+         profileTextLabel,
+         profilePhoto,
          exitButton].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             view.addSubview($0)

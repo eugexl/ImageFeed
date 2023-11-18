@@ -11,7 +11,7 @@ import WebKit
 final class WebViewViewController: UIViewController {
     
     weak var delegate: WebViewViewControllerDelegate?
-
+    
     private let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: NamedImages.authWebBackButton), for: .normal)
@@ -106,9 +106,6 @@ extension WebViewViewController: WKNavigationDelegate {
         if let code = code(from: navigationAction) {
             
             delegate?.webViewViewController(self, didAuthenticateWithCode: code)
-            
-            // Зачишаем cookie
-            HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
             
             // Чистим кэшированные данные, чтоб после Логаута в приложении страница авторизации Unsplash заново запрашивала параметры (эл. адрес / пароль) пользователя.
             WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { webData in

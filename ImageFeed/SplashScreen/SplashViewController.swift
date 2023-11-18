@@ -12,7 +12,7 @@ class SplashViewController: UIViewController {
     private let splashScreenLogo: UIImageView = {
         
         let imageView = UIImageView(image: UIImage(named: NamedImages.splashScreenLogoImage))
-       
+        
         return imageView
     }()
     
@@ -72,7 +72,7 @@ class SplashViewController: UIViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
-       
+        
         vc.dismiss(animated: true)
         
         dismiss(animated: true) { [weak self] in
@@ -96,7 +96,12 @@ extension SplashViewController: AuthViewControllerDelegate {
                     let alertActions = [
                         UIAlertAction(title: "ОК", style: .cancel) { _ in self.authoriseUser() }
                     ]
-                    AlertPresenter.shared.presentAlert(title: "Что-то пошло не так!", message: "Не удалось войти в систему.", actions: alertActions, target: self)
+                    AlertPresenter.shared.presentAlert(
+                        title: "Что-то пошло не так!",
+                        message: "Не удалось войти в систему.",
+                        actions: alertActions,
+                        target: self
+                    )
                 }
             }
         }
@@ -123,10 +128,12 @@ extension SplashViewController: AuthViewControllerDelegate {
                     UIAlertAction(title: "ОК", style: .cancel) { _ in self.fetchProfile() }
                 ]
                 
-                AlertPresenter.shared.presentAlert(title: "Что-то пошло не так!",
-                                                message: "Не удалось получить данные с сервера.",
-                                                actions: alertActions,
-                                                target: self)
+                AlertPresenter.shared.presentAlert(
+                    title: "Что-то пошло не так!",
+                    message: "Не удалось получить данные с сервера.",
+                    actions: alertActions,
+                    target: self
+                )
                 
                 UIBlockingProgressHUD.dismiss()
                 

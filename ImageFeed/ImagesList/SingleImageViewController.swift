@@ -79,26 +79,31 @@ final class SingleImageViewController: UIViewController {
         guard let url = imageURL else {
             
             DispatchQueue.main.async {
-                    let alertAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-                        self?.dismiss(animated: true)
-                    }
-                    AlertPresenter.shared.presentAlert(title: "Что-то пошло не так", message: "Не удалось загрузить изображение", actions: [alertAction], target: self)
+                let alertAction = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+                    self?.dismiss(animated: true)
+                }
+                AlertPresenter.shared.presentAlert(
+                    title: "Что-то пошло не так",
+                    message: "Не удалось загрузить изображение",
+                    actions: [alertAction],
+                    target: self
+                )
             }
             return
         }
-                
+        
         UIBlockingProgressHUD.show()
-                
+        
         imageView.kf.setImage(with: url) { [weak self] result in
             UIBlockingProgressHUD.dismiss()
-                    
+            
             guard let self = self else { return }
-                    
+            
             switch result {
             case .success(let imageData):
-                        
+                
                 self.rescaleAndCenterImageInScrollView(image: imageData.image)
-                        
+                
             case .failure:
                 showError()
             }
@@ -149,7 +154,12 @@ final class SingleImageViewController: UIViewController {
                 self?.setImage()
             }
         ]
-        AlertPresenter.shared.presentAlert(title: "Что-то пошло не так", message: "Попробовать ещё раз?", actions: actions, target: self)
+        AlertPresenter.shared.presentAlert(
+            title: "Что-то пошло не так",
+            message: "Попробовать ещё раз?",
+            actions: actions,
+            target: self
+        )
     }
     
     private func rescaleAndCenterImageInScrollView(image: UIImage) {
@@ -182,6 +192,6 @@ final class SingleImageViewController: UIViewController {
 extension SingleImageViewController: UIScrollViewDelegate {
     
     func viewForZooming(in scrollView: UIScrollView) -> UIView? {
-       return imageView
+        return imageView
     }
 }
