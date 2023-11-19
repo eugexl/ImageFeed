@@ -34,7 +34,7 @@ class AuthViewController: UIViewController {
     override var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -72,7 +72,7 @@ class AuthViewController: UIViewController {
         webVC.modalPresentationStyle = .fullScreen
         webVC.delegate = self
         
-       present(webVC, animated: true)
+        present(webVC, animated: true)
     }
 }
 
@@ -90,7 +90,6 @@ extension AuthViewController: WebViewViewControllerDelegate{
     
     func webViewViewControllerDidCancel(_ vc: WebViewViewController) {
         
-//        navigationController?.navigationBar.barStyle = .black
         dismiss(animated: true)
     }
 }

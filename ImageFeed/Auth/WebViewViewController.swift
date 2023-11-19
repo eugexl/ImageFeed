@@ -11,7 +11,7 @@ import WebKit
 final class WebViewViewController: UIViewController {
     
     weak var delegate: WebViewViewControllerDelegate?
-
+    
     private let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: NamedImages.authWebBackButton), for: .normal)

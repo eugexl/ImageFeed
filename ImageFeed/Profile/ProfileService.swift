@@ -17,7 +17,7 @@ final class ProfileService {
     private var task: URLSessionTask?
     
     private init() {}
-   
+    
     func fetchProfile(_ completion: @escaping (Result<String, Error>) -> Void) {
         
         assert(Thread.isMainThread)
@@ -28,7 +28,7 @@ final class ProfileService {
         
         let task = URLSession.shared.objectTask(for: request) { [ weak self ] (result: Result<ProfileResult, Error>) in
             guard let self = self else { return }
-                       
+            
             switch result {
             case .success(let profileResult):
                 

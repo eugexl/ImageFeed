@@ -25,7 +25,7 @@ final class OAuth2Service {
         lastCode = code
         
         let authTokenRequest =  URLRequests.shared.authTokenRequest(code: code)
-         
+        
         let task = URLSession.shared.objectTask(for: authTokenRequest) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
             
             guard let self = self else { return }
