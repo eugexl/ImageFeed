@@ -13,12 +13,14 @@ struct UnsplashData {
     static let secretKey = "VNQJRTqyR8xj02sWpQN68HBwLxAgQFmZBYkoMJE-Jh0"
     
     static let redirectURI = "urn:ietf:wg:oauth:2.0:oob"
+    static let responseType = "code"
     
     static let accessScope = "public+read_user+write_likes"
     static let defaultBase = "https://api.unsplash.com"
     static let defaultBaseURL = URL(string: defaultBase)
     
     static let authorizeURLString = "https://unsplash.com/oauth/authorize"
+    static let authorizeNativePath = "/oauth/authorize/native"
     static let tokenRequestURLString = "https://unsplash.com/oauth/token"
     
     static let getMeRequestURL = URL(string: "https://api.unsplash.com/me")
@@ -33,9 +35,6 @@ struct UnsplashData {
     static func likePhotoURL(photoId: String) -> URL? {
         return URL(string: "\(defaultBase)/photos/\(photoId)/like")
     }
-    
-    static let httpMethodPost = "POST"
-    static let httpMethodDelete = "DELETE"
 }
 
 struct VCs {
