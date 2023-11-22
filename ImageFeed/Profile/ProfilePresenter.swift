@@ -7,25 +7,27 @@
 
 import UIKit
 
-protocol ProfileViewPresenterProtocol {
+protocol ProfilePresenterProtocol {
     
     var view: ProfileViewControllerProtocol? { get set }
     
+    func viewDidLoad(with view: ProfileViewControllerProtocol)
     func leaveApp()
-    func viewDidLoad()
 }
 
-final class ProfileViewPresenter: ProfileViewPresenterProtocol {
+final class ProfilePresenter: ProfilePresenterProtocol {
     
     weak var view: ProfileViewControllerProtocol?
     
     private var profileImageServiceObserver: NSObjectProtocol?
     
-    func viewDidLoad(){
+    func viewDidLoad(with view: ProfileViewControllerProtocol){
+        
+        self.view = view
         
         if let profile = ProfileService.shared.profile {
             
-            view?.fillUpElements(with: profile)
+            self.view?.fillUpElements(with: profile)
         }
         
         updateAvatar()
@@ -36,15 +38,6 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
         })
     }
     
-    func updateAvatar(){
-        guard
-            let profileImageURL = ProfileImageService.shared.avatarURL,
-            let url = URL(string: profileImageURL)
-        else { return }
-        
-        view?.setAvatar(with: url)
-    }
-  
     func leaveApp() {
         
         // Зачишаем cookie
@@ -60,5 +53,14 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
         let splashViewontroller = SplashViewController()
         
         window.rootViewController = splashViewontroller
+    }
+    
+    func updateAvatar(){
+        guard
+            let profileImageURL = ProfileImageService.shared.avatarURL,
+            let url = URL(string: profileImageURL)
+        else { return }
+        
+        view?.setAvatar(with: url)
     }
 }

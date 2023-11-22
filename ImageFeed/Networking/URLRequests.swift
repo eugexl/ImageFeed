@@ -17,6 +17,9 @@ struct URLRequests {
         }
     }
     
+    let httpMethodPost = "POST"
+    let httpMethodDelete = "DELETE"
+    
     private init() {}
     
     func authTokenRequest(code: String) -> URLRequest {
@@ -32,7 +35,32 @@ struct URLRequests {
         ]
         
         var request = URLRequest(url: urlComponents.url!)
-        request.httpMethod = UnsplashData.httpMethodPost
+        request.httpMethod = URLRequests.shared.httpMethodPost
+        return request
+    }
+    
+    func photoLike(photoId: String, isLike: Bool) -> URLRequest {
+        
+        guard let url = UnsplashData.likePhotoURL(photoId: photoId) else {
+            fatalError("URLRequests.photoLike: Не получилось создать URL для запроса photo/:id/like")
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpMethod = isLike ? URLRequests.shared.httpMethodPost : URLRequests.shared.httpMethodDelete
+        
+        return request
+    }
+    
+    func photoListRequest(page num: Int) -> URLRequest {
+        
+        guard let url = UnsplashData.getPhotoListURL(page: num) else {
+            fatalError("Couldn''t create URL for GETting page list data")
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        
         return request
     }
     
@@ -56,31 +84,6 @@ struct URLRequests {
         
         var request = URLRequest(url: url)
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        return request
-    }
-    
-    func photoListRequest(page num: Int) -> URLRequest {
-        
-        guard let url = UnsplashData.getPhotoListURL(page: num) else {
-            fatalError("Couldn''t create URL for GETting page list data")
-        }
-        
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        
-        return request
-    }
-    
-    func photoLike(photoId: String, isLike: Bool) -> URLRequest {
-        
-        guard let url = UnsplashData.likePhotoURL(photoId: photoId) else {
-            fatalError("URLRequests.photoLike: Не получилось создать URL для запроса photo/:id/like")
-        }
-        
-        var request = URLRequest(url: url)
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
-        request.httpMethod = isLike ? UnsplashData.httpMethodPost : UnsplashData.httpMethodDelete
         
         return request
     }
