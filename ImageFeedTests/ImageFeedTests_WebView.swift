@@ -5,13 +5,11 @@
 //  Created by Eugene Dmitrichenko on 21.11.2023.
 //
 
-@testable import ImageFeed
 
 import XCTest
+@testable import ImageFeed
 
 final class WebViewTests: XCTestCase {
-    
-    
     
     func testViewControllerCallsViewDidload() {
         
@@ -22,7 +20,6 @@ final class WebViewTests: XCTestCase {
         let presenter = WebViewPresenterSpy()
         
         webVC.presenter = presenter
-        
         
         // When:
         

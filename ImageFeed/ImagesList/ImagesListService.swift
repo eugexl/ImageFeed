@@ -7,13 +7,22 @@
 
 import UIKit
 
-final class ImagesListService {
+public protocol ImagesListServiceProtocol {
+    
+    static var DidChangeNotification: Notification.Name { get }
+    var photos: [Photo] { get set }
+    
+    func fetchPhotosNextPage()
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
     
     static let shared = ImagesListService()
     
     static let DidChangeNotification = Notification.Name( rawValue: NotificationNames.imagesListServiceDidChange)
     
-    private (set) var photos: [Photo] = []
+    var photos: [Photo] = []
     
     private var lastLoadedPage: Int = 0
     

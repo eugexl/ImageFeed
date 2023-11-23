@@ -10,12 +10,15 @@ import UIKit
 protocol ProfilePresenterProtocol {
     
     var view: ProfileViewControllerProtocol? { get set }
+    var oauth2TokenStorage: OAuth2TokenStorageProtocol { get set }
     
     func viewDidLoad(with view: ProfileViewControllerProtocol)
     func leaveApp()
 }
 
 final class ProfilePresenter: ProfilePresenterProtocol {
+    
+    var oauth2TokenStorage: OAuth2TokenStorageProtocol = OAuth2TokenStorage.shared
     
     weak var view: ProfileViewControllerProtocol?
     
@@ -44,7 +47,7 @@ final class ProfilePresenter: ProfilePresenterProtocol {
         HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
         
         // Удаляем токен доступа к API
-        OAuth2TokenStorage.shared.clearToken()
+        oauth2TokenStorage.clearToken()
         
         guard let window = UIApplication.shared.windows.first else {
             fatalError("Invalid UIApplication Configuration")

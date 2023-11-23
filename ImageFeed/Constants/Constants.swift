@@ -63,6 +63,6 @@ struct ColorNames {
     static let ypWhite = "YP White"
 }
 
-struct NotificationNames {
+public struct NotificationNames {
     static let imagesListServiceDidChange = "ImagesListServiceDidChange"
 }

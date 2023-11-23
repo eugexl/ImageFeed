@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ImagesListCell: UITableViewCell {
+public final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     
@@ -75,7 +75,7 @@ final class ImagesListCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         
         cellImage.kf.cancelDownloadTask()

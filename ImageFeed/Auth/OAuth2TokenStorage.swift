@@ -8,8 +8,13 @@
 import Foundation
 import SwiftKeychainWrapper
 
+public protocol OAuth2TokenStorageProtocol {
+    
+   func clearToken()
+}
+
 /// Сингтон для сохранения / возвращения OAuth2-токена в/из UserDefaults-репозитория
-final class OAuth2TokenStorage {
+final class OAuth2TokenStorage: OAuth2TokenStorageProtocol {
     
     static let shared = OAuth2TokenStorage()
     

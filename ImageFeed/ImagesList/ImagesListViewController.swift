@@ -14,15 +14,16 @@ public protocol ImagesListViewControllerProtocol: AnyObject {
     var presenter: ImagesListPresenterProtocol { get set }
     var tableView: UITableView { get set }
     
-    func updateTableViewAnimated(at indexPaths: [IndexPath])
+    
+    func updateList(with photos: [Photo], at indexPaths: [IndexPath])
     func likeWarn()
 }
 
 final class ImagesListViewController: UIViewController, ImagesListViewControllerProtocol {
     
-    
-//    var presenter: ImagesListPresenterProtocol?
+    private ( set ) var photos: [Photo] = []
     var presenter: ImagesListPresenterProtocol = ImagesListPresenter()
+    var alertPresenter: AlertPresenterProtocol = AlertPresenter.shared
     
     var tableView: UITableView = {
         
@@ -64,17 +65,22 @@ final class ImagesListViewController: UIViewController, ImagesListViewController
         ])
     }
     
-    func updateTableViewAnimated(at indexPaths: [IndexPath]) {
+    func updateList(with photos: [Photo], at indexPaths: [IndexPath]) {
         
-        tableView.performBatchUpdates {
-            tableView.insertRows(at: indexPaths, with: .automatic)
+        self.photos = photos
+        
+        // For Unit test's sake
+        if self.viewIfLoaded?.window != nil {
+            tableView.performBatchUpdates {
+                tableView.insertRows(at: indexPaths, with: .automatic)
+            }
         }
     }
     
     func likeWarn(){
         
         let action = UIAlertAction(title: "ОК", style: .cancel)
-        AlertPresenter.shared.presentAlert(
+        alertPresenter.presentAlert(
             title: "Что-то пошло не так!",
             message: "К сожалению, не удалось поставить лайк данному изображению",
             actions: [action],
@@ -88,7 +94,7 @@ extension ImagesListViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         
-        let photoInfo = presenter.photoForRow(at: indexPath.row)
+        let photoInfo = photos[indexPath.row]
         
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
@@ -104,7 +110,7 @@ extension ImagesListViewController: UITableViewDelegate {
         
         
         let imageVC = SingleImageViewController()
-        imageVC.imageURL = presenter.largePhotoURL(for: indexPath.row)
+        imageVC.imageURL = URL(string: photos[indexPath.row].largeImageURL)
         
         imageVC.modalPresentationStyle = .fullScreen
         self.present(imageVC, animated: true)
@@ -122,7 +128,7 @@ extension ImagesListViewController: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return presenter.numberOfPhotos()
+        return photos.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -133,17 +139,15 @@ extension ImagesListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        configCell(for: imageListCell, with: indexPath)
+        configCell(for: imageListCell, with: photos[indexPath.row])
         
         return imageListCell
     }
     
     /// Настраиваем отображение ячейки таблицы
-    func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
+    func configCell(for cell: ImagesListCell, with photo: Photo) {
         
-        let photoInfo = presenter.photoForRow(at: indexPath.row)
-        
-        if let url = URL(string: photoInfo.thumbImageURL) {
+        if let url = URL(string: photo.thumbImageURL) {
             
             let roundCornerEffect = RoundCornerImageProcessor(cornerRadius: 8.0)
             cell.cellImage.kf.indicatorType = .activity
@@ -154,7 +158,7 @@ extension ImagesListViewController: UITableViewDataSource {
             cell.cellImage.image = UIImage(named: NamedImages.stubPhoto)
         }
         
-        if let createdAt = photoInfo.createdAt {
+        if let createdAt = photo.createdAt {
             
             cell.dateLabel.text = DateFormatters.imageListDateFormatter.string(from: createdAt)
         } else {
@@ -162,7 +166,7 @@ extension ImagesListViewController: UITableViewDataSource {
             cell.dateLabel.text = ""
         }
         
-        cell.setIsLiked(state: photoInfo.isLiked)
+        cell.setIsLiked(state: photo.isLiked)
         
         cell.delegate = presenter as? ImagesListCellDelegate
     }

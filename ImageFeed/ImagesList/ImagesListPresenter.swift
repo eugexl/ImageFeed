@@ -6,17 +6,14 @@
 //
 
 import Foundation
+import Kingfisher
 
 public protocol ImagesListPresenterProtocol {
     
     var view: ImagesListViewControllerProtocol? { get set }
-    var photos: [Photo] { get set }
-//    var timeToFetchPhotos: Int { get set }
+    var imagesListService: ImagesListServiceProtocol { get set }
     
     func viewDidLoad(with view: ImagesListViewControllerProtocol)
-    func largePhotoURL(for row: Int) -> URL?
-    func numberOfPhotos() -> Int
-    func photoForRow(at row: Int) -> Photo
     func willDisplay(row: Int)
 }
 
@@ -24,8 +21,10 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
     
     weak var view: ImagesListViewControllerProtocol?
     
-    var photos: [Photo] = []
-    var timeToFetchPhotos: Int = 0
+    var imagesListService: ImagesListServiceProtocol = ImagesListService.shared
+    
+    private var currentPhotoNumber: Int = 0
+    private var timeToFetchPhotos: Int = 0
     
     func viewDidLoad(with view: ImagesListViewControllerProtocol){
         
@@ -38,47 +37,31 @@ final class ImagesListPresenter: ImagesListPresenterProtocol {
             self.updatePhotoList()
         }
         
-        ImagesListService.shared.fetchPhotosNextPage()
-    }
-    
-    func largePhotoURL(for row: Int) -> URL? {
-        
-        return URL(string: photos[row].largeImageURL)
-    }
-    
-    func numberOfPhotos() -> Int {
-        
-        return photos.count
-    }
-    
-    func photoForRow(at row: Int) -> Photo {
-        
-        return photos[row]
+        imagesListService.fetchPhotosNextPage()
     }
     
     func updatePhotoList() {
         
-        let oldPhotosNum = photos.count
-        photos = ImagesListService.shared.photos
-        let newPhotosNum = photos.count
+        let newPhotosNum = imagesListService.photos.count
         
-        timeToFetchPhotos = photos.count - 1
-        
-        if newPhotosNum > oldPhotosNum {
+        if newPhotosNum > currentPhotoNumber {
             
-            let indexPaths: [IndexPath] = (oldPhotosNum..<newPhotosNum).map { i in
+            let indexPaths: [IndexPath] = (currentPhotoNumber..<newPhotosNum).map { i in
                 return IndexPath(row: i, section: 0)
             }
             
-            view?.updateTableViewAnimated(at: indexPaths)
+            view?.updateList(with: imagesListService.photos, at: indexPaths)
         }
+        
+        currentPhotoNumber = imagesListService.photos.count
+        timeToFetchPhotos = currentPhotoNumber - 1
     }
     
     func willDisplay(row: Int){
         
         if row == timeToFetchPhotos {
             
-            ImagesListService.shared.fetchPhotosNextPage()
+            imagesListService.fetchPhotosNextPage()
         }
     }
 }
@@ -90,17 +73,16 @@ extension ImagesListPresenter: ImagesListCellDelegate {
         
         UIBlockingProgressHUD.show()
         
-        let photoInfo = photos[indexPath.row]
+        let photoInfo = imagesListService.photos[indexPath.row]
         let newLikeState = !photoInfo.isLiked
         
-        ImagesListService.shared.changeLike(photoId: photoInfo.id, isLike: newLikeState) { [weak self] result in
+        imagesListService.changeLike(photoId: photoInfo.id, isLike: newLikeState) { [weak self] result in
             
             guard let self = self else { return }
             
             switch result {
             case .success:
                 
-                self.photos = ImagesListService.shared.photos
                 cell.setIsLiked(state: newLikeState)
                 
             case .failure:
