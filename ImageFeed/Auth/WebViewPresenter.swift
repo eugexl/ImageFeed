@@ -5,7 +5,7 @@
 //  Created by Eugene Dmitrichenko on 19.11.2023.
 //
 
-import UIKit
+import Foundation
 
 public protocol WebViewPresenterProtocol {
     
@@ -23,11 +23,17 @@ final class WebViewPresenter: WebViewPresenterProtocol {
     
     func viewDidLoad() {
         
-        let request = authHelper.authRequest()
-        
-        didUpdateProgressValue(0.0)
-        
-        view?.load(request: request)
+        do {
+            let request = try authHelper.authRequest()
+            
+            didUpdateProgressValue(0.0)
+            
+            view?.load(request: request)
+            
+        } catch {
+            
+            view?.alert(with: error)
+        }
     }
     
     init(authHelper: AuthHelperProtocol) {

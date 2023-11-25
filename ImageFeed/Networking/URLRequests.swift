@@ -22,11 +22,11 @@ struct URLRequests {
     
     private init() {}
     
-    func authTokenRequest(code: String) -> URLRequest {
+    func authTokenRequest(code: String) throws -> URLRequest {
         
-        var urlComponents = URLComponents(string: UnsplashData.tokenRequestURLString)!
+        var urlComponents = URLComponents(string: UnsplashData.tokenRequestURLString)
         
-        urlComponents.queryItems = [
+        urlComponents?.queryItems = [
             URLQueryItem(name: "client_id", value: UnsplashData.accessKey),
             URLQueryItem(name: "client_secret", value: UnsplashData.secretKey),
             URLQueryItem(name: "redirect_uri", value: UnsplashData.redirectURI),
@@ -34,8 +34,13 @@ struct URLRequests {
             URLQueryItem(name: "grant_type", value: "authorization_code")
         ]
         
-        var request = URLRequest(url: urlComponents.url!)
+        guard let url = urlComponents?.url else {
+            throw NetworkError.invalidURL
+        }
+        
+        var request = URLRequest(url: url)
         request.httpMethod = URLRequests.shared.httpMethodPost
+        
         return request
     }
     

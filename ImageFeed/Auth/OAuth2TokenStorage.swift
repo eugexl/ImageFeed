@@ -10,7 +10,7 @@ import SwiftKeychainWrapper
 
 public protocol OAuth2TokenStorageProtocol {
     
-   func clearToken()
+    func clearToken()
 }
 
 /// Сингтон для сохранения / возвращения OAuth2-токена в/из UserDefaults-репозитория

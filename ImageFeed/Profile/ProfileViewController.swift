@@ -130,8 +130,8 @@ final class ProfileViewController: UIViewController, ProfileViewControllerProtoc
     
     func setAvatar(with url: URL) {
         
-//        ImageCache.default.clearDiskCache()
-//        ImageCache.default.clearMemoryCache()
+        //        ImageCache.default.clearDiskCache()
+        //        ImageCache.default.clearMemoryCache()
         
         let roundCornerEffect = RoundCornerImageProcessor(cornerRadius: 35)
         profilePhoto.kf.indicatorType = .activity

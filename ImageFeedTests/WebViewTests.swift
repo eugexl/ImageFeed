@@ -11,6 +11,8 @@ import XCTest
 
 final class WebViewTests: XCTestCase {
     
+    let authHelper: AuthHelperProtocol = AuthHelper()
+    
     func testViewControllerCallsViewDidload() {
         
         // Given:
@@ -33,24 +35,27 @@ final class WebViewTests: XCTestCase {
     func testPresenterCallsLoadRequest() {
         
         // Given:
+        
         let webVC = WebViewViewControllerSpy()
-        let presenter = WebViewPresenter(authHelper: AuthHelper())
+        let presenter = WebViewPresenter(authHelper: authHelper)
         
         webVC.presenter = presenter
         presenter.view = webVC
         
         // When:
+        
         presenter.viewDidLoad()
         
         // Then:
+        
         XCTAssertTrue(webVC.loadMethodWasCalled)
     }
     
     func testProtressVisibleWhenLessThenOne(){
         
         // Given:
-        let authHelperTest = AuthHelper()
-        let presenter = WebViewPresenter(authHelper: authHelperTest)
+        
+        let presenter = WebViewPresenter(authHelper: authHelper)
         let progressTestValue: Float = 0.6
         
         // When:
@@ -65,10 +70,12 @@ final class WebViewTests: XCTestCase {
     func testProgressHiddenWhenOne() {
         
         // Given:
-        let presenter = WebViewPresenter(authHelper: AuthHelper())
+        
+        let presenter = WebViewPresenter(authHelper: authHelper)
         let progressTestValue: Float = 1.0
         
         // When:
+        
         let shouldHideProgress =  presenter.shouldHideProgress(for: progressTestValue)
         
         // Then:
@@ -79,33 +86,46 @@ final class WebViewTests: XCTestCase {
     func testAuthHelperAuthURL() {
         
         // Given:
-        let config = AuthConfiguration.standard
-        let authHelper = AuthHelper(configuration: config)
+        
+        guard let url = authHelper.authURL() else {
+            
+            XCTFail("Не удалось получить URL от AuthHelper-а")
+            return
+        }
         
         // When:
-        let url = authHelper.authURL()
+        
         let urlString = url.absoluteString
         
         // Then:
-        XCTAssertTrue(urlString.contains(config.authURLString))
-        XCTAssertTrue(urlString.contains(config.accessKey))
-        XCTAssertTrue(urlString.contains(config.redirectURI))
+        
+        XCTAssertTrue(urlString.contains(UnsplashData.authorizeURLString))
+        XCTAssertTrue(urlString.contains(UnsplashData.accessKey))
+        XCTAssertTrue(urlString.contains(UnsplashData.redirectURI))
         XCTAssertTrue(urlString.contains(UnsplashData.responseType))
-        XCTAssertTrue(urlString.contains(config.accessScrope))
+        XCTAssertTrue(urlString.contains(UnsplashData.accessScope))
     }
     
     func testCodeFromURL() {
         
         // Given:
-        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native")!
-            urlComponents.queryItems = [URLQueryItem(name: UnsplashData.responseType, value: "Code Value")]
-        let url = urlComponents.url!
-        let authHelper = AuthHelper()
+        
+        let testCodeValue = "Test Code Value"
+        var urlComponents = URLComponents(string: "https://unsplash.com/oauth/authorize/native")
+            urlComponents?.queryItems = [URLQueryItem(name: UnsplashData.responseType, value: testCodeValue)]
+        
+        guard let url = urlComponents?.url else {
+            
+            XCTFail("Не удалось сгенерировать URL для теста!")
+            return
+        }
         
         // When:
+        
         let code = authHelper.code(from: url)
         
         // Then:
-        XCTAssertEqual(code, "Code Value")
+        
+        XCTAssertEqual(code, testCodeValue)
     }
 }

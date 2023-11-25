@@ -43,10 +43,9 @@ public final class ImagesListCell: UITableViewCell {
         contentView.contentMode = .scaleToFill
         contentView.clipsToBounds = true
         
-        [
-            cellImage,
-            likeButton,
-            dateLabel
+        [ cellImage,
+          likeButton,
+          dateLabel
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)

@@ -11,17 +11,17 @@ import WebKit
 public protocol WebViewViewControllerProtocol: AnyObject {
     var presenter: WebViewPresenterProtocol? { get set }
     
+    func alert(with error: Error)
     func load(request: URLRequest)
     func setProgressValue(_ newValue: Float)
     func setProgressHidden(_ isHidden: Bool)
 }
 
 final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
- 
-    
     
     weak var delegate: WebViewViewControllerDelegate?
     var presenter: WebViewPresenterProtocol?
+    lazy var alertPresenter: AlertPresenterProtocol = AlertPresenter.shared
     
     private let backButton: UIButton = {
         let button = UIButton()
@@ -42,8 +42,6 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         
         return webView
     }()
-    
-   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,9 +101,34 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     func setProgressValue(_ newValue: Float){
         progressView.setProgress(Float(newValue), animated: true)
     }
-        
+    
     func setProgressHidden(_ isHidden: Bool) {
         progressView.isHidden = isHidden
+    }
+    
+    func alert(with error: Error){
+        
+        switch error {
+            
+        case NetworkError.invalidURL:
+            
+            DispatchQueue.main.async {
+                let alertAction = UIAlertAction(title: "ОК", style: .cancel) { [weak self] _ in
+                    
+                    guard let self = self else { return }
+                    self.delegate?.webViewViewControllerDidCancel(self)
+                }
+                
+                self.alertPresenter.presentAlert(title: "Что-то пошло не так!",
+                                                 message: "Не удалось сформировать запрос",
+                                                 actions: [alertAction],
+                                                 target: self)
+            }
+            
+        default:
+            
+            return
+        }
     }
 }
 

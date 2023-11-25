@@ -11,10 +11,10 @@ final class ImageFeedUITests: XCTestCase {
     
     private let app = XCUIApplication()
     
-    private let userEmail = ""
-    private let userPass = ""
-    private let userFullName = ""
-    private let userName = ""
+    private let userEmail = "eugexl@gmail.com"
+    private let userPass = "n3v3rGiveitUp"
+    private let userFullName = "Eugene Dmitrichenko"
+    private let userName = "@eugexl"
     
     override func setUpWithError() throws {
         
@@ -25,8 +25,6 @@ final class ImageFeedUITests: XCTestCase {
     
     
     func testAuthView() throws {
-        
-        print("TestAuth")
         
         app.buttons["AuthButton"].tap()
         
@@ -57,6 +55,14 @@ final class ImageFeedUITests: XCTestCase {
         sleep(2)
         
         webView.buttons["Login"].tap()
+        
+        sleep(4)
+        
+        let tableView = app.tables.firstMatch
+        let cell = tableView.children(matching: .cell).element(boundBy: 0)
+        
+        XCTAssertTrue(cell.waitForExistence(timeout: 5))
+        XCTAssertEqual(tableView.cells.count, 10)
     }
     
     func testFeedView() throws {
@@ -77,11 +83,11 @@ final class ImageFeedUITests: XCTestCase {
         
         likeButton.tap()
         
-        sleep(3)
+        sleep(5)
         
         likeButton.tap()
         
-        sleep(3)
+        sleep(5)
         
         print("Open image in ScrollView ...")
         
@@ -124,6 +130,10 @@ final class ImageFeedUITests: XCTestCase {
         
         sleep(4)
         
-        app.alerts.firstMatch.buttons.element(boundBy: 0)
+        app.alerts.firstMatch.buttons.element(boundBy: 0).tap()
+        
+        sleep(4)
+        
+        XCTAssertTrue(app.staticTexts["Войти"].exists)
     }
 }

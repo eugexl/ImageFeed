@@ -8,7 +8,7 @@
 import XCTest
 @testable import ImageFeed
 
-final class ImagesListTests_Profile: XCTestCase {
+final class ProfileTests: XCTestCase {
     
     override func setUpWithError() throws {
         continueAfterFailure = false

@@ -14,6 +14,10 @@ final class WebViewViewControllerSpy: WebViewViewControllerProtocol {
     
     var loadMethodWasCalled: Bool = false
     
+    func alert(with error: Error) {
+        
+    }
+    
     func load(request: URLRequest) {
         
         loadMethodWasCalled = true

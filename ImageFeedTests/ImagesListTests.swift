@@ -9,7 +9,7 @@
 import XCTest
 @testable import ImageFeed
 
-final class ImagesListTests_ImageList: XCTestCase {
+final class ImageListTests: XCTestCase {
     
     let mockPhotos = [
         Photo(
@@ -63,10 +63,10 @@ final class ImagesListTests_ImageList: XCTestCase {
     }
     
     // Проверяем что при вызове метода likeWarn вызывается Alert Presenter
-    
     func testImageListViewWarnsOfLike() {
         
         // Given:
+        
         let sut = ImagesListViewController()
         let alertPresenterSpy = AlertPresenterSpy()
         sut.alertPresenter = alertPresenterSpy
@@ -85,6 +85,7 @@ final class ImagesListTests_ImageList: XCTestCase {
     func testImageListPresenterViewDidLoadAndWillDisplay(){
         
         // Given:
+        
         let imageListVC = ImagesListViewController()
         var sut = imageListVC.presenter
         sut.imagesListService = ImagesListServiceSpy.shared
