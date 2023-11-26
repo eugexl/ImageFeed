@@ -9,5 +9,5 @@ import Foundation
 
 struct AbbreviatedPhoto: Decodable {
     
-    let photo: Photo
+    let photo: PhotoResult
 }

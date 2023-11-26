@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Photo: Decodable {
+public struct Photo: Decodable {
     
     let id: String
     let size: CGSize

@@ -8,17 +8,26 @@
 import UIKit
 import WebKit
 
-final class WebViewViewController: UIViewController {
+public protocol WebViewViewControllerProtocol: AnyObject {
+    var presenter: WebViewPresenterProtocol? { get set }
+    
+    func alert(with error: Error)
+    func load(request: URLRequest)
+    func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHidden: Bool)
+}
+
+final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
     
     weak var delegate: WebViewViewControllerDelegate?
+    var presenter: WebViewPresenterProtocol?
+    lazy var alertPresenter: AlertPresenterProtocol = AlertPresenter.shared
     
     private let backButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: NamedImages.authWebBackButton), for: .normal)
         return button
     }()
-    
-    private var estimatedProgressObservation: NSKeyValueObservation?
     
     private let progressView: UIProgressView = {
         let progress = UIProgressView()
@@ -28,35 +37,33 @@ final class WebViewViewController: UIViewController {
     
     private let webView: WKWebView = {
         
-        return WKWebView()
+        let webView = WKWebView()
+        webView.accessibilityIdentifier = "AuthWebView"
+        
+        return webView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        estimatedProgressObservation = webView.observe(\.estimatedProgress, changeHandler: { [weak self] _ , _ in
-            guard let self = self else { return }
-            self.updateProgress()
-        })
+        webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         
-        progressView.progress = 0.0
+        webView.navigationDelegate = self
         setUpWebView()
+        presenter?.viewDidLoad()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        webView.removeObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), context: nil)
+    }
+    
+    func load(request: URLRequest) {
+        webView.load(request)
     }
     
     private func setUpWebView(){
-        
-        var urlComponents = URLComponents(string: UnsplashData.authorizeURLString)!
-        
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: UnsplashData.accessKey),
-            URLQueryItem(name: "redirect_uri", value: UnsplashData.redirectURI),
-            URLQueryItem(name: "response_type", value: "code"),
-            URLQueryItem(name: "scope", value: UnsplashData.accessScope)
-        ]
-        
-        let url = urlComponents.url!
-        
-        let request = URLRequest(url: url)
         
         [   webView,
             progressView,
@@ -82,10 +89,8 @@ final class WebViewViewController: UIViewController {
             ]
         )
         
-        webView.navigationDelegate = self
-        webView.load(request)
-        
         backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        
     }
     
     @objc
@@ -93,13 +98,50 @@ final class WebViewViewController: UIViewController {
         delegate?.webViewViewControllerDidCancel(self)
     }
     
-    private func updateProgress(){
-        progressView.setProgress(Float(webView.estimatedProgress), animated: true)
-        progressView.isHidden = fabs(webView.estimatedProgress - 1.0) <= 0.0001
+    func setProgressValue(_ newValue: Float){
+        progressView.setProgress(Float(newValue), animated: true)
+    }
+    
+    func setProgressHidden(_ isHidden: Bool) {
+        progressView.isHidden = isHidden
+    }
+    
+    func alert(with error: Error){
+        
+        switch error {
+            
+        case NetworkError.invalidURL:
+            
+            DispatchQueue.main.async {
+                let alertAction = UIAlertAction(title: "ОК", style: .cancel) { [weak self] _ in
+                    
+                    guard let self = self else { return }
+                    self.delegate?.webViewViewControllerDidCancel(self)
+                }
+                
+                self.alertPresenter.presentAlert(title: "Что-то пошло не так!",
+                                                 message: "Не удалось сформировать запрос",
+                                                 actions: [alertAction],
+                                                 target: self)
+            }
+            
+        default:
+            
+            return
+        }
     }
 }
 
 extension WebViewViewController: WKNavigationDelegate {
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        
+        if keyPath == #keyPath(WKWebView.estimatedProgress) {
+            presenter?.didUpdateProgressValue(webView.estimatedProgress)
+        } else {
+            super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
+        }
+    }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
@@ -122,15 +164,11 @@ extension WebViewViewController: WKNavigationDelegate {
     
     private func code(from navigationAction: WKNavigationAction) -> String? {
         
-        if let url = navigationAction.request.url,
-           let urlComponents = URLComponents(string: url.absoluteString),
-           urlComponents.path == "/oauth/authorize/native",
-           let items = urlComponents.queryItems,
-           let codeItem = items.first(where: {$0.name == "code"})
-        {
-            return codeItem.value
-        } else {
-            return nil
+        if let url = navigationAction.request.url {
+            return presenter?.code(from: url)
         }
+        
+        return nil
     }
 }
+

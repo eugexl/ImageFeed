@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class ImagesListCell: UITableViewCell {
+public final class ImagesListCell: UITableViewCell {
     
     static let reuseIdentifier = "ImagesListCell"
     
@@ -27,6 +27,7 @@ final class ImagesListCell: UITableViewCell {
     
     let likeButton: UIButton = {
         let button = UIButton(type: .custom)
+        button.accessibilityIdentifier = "LikeButton"
         return button
     }()
     
@@ -42,10 +43,9 @@ final class ImagesListCell: UITableViewCell {
         contentView.contentMode = .scaleToFill
         contentView.clipsToBounds = true
         
-        [
-            cellImage,
-            likeButton,
-            dateLabel
+        [ cellImage,
+          likeButton,
+          dateLabel
         ].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
             contentView.addSubview($0)
@@ -74,7 +74,7 @@ final class ImagesListCell: UITableViewCell {
         super.init(coder: coder)
     }
     
-    override func prepareForReuse() {
+    public override func prepareForReuse() {
         super.prepareForReuse()
         
         cellImage.kf.cancelDownloadTask()

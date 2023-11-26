@@ -21,6 +21,7 @@ class AuthViewController: UIViewController {
         button.layer.cornerRadius = 16.0
         button.layer.masksToBounds = true
         button.backgroundColor = UIColor(named: ColorNames.ypWhite)
+        button.accessibilityIdentifier = "AuthButton"
         
         return button
     }()
@@ -71,6 +72,10 @@ class AuthViewController: UIViewController {
         let webVC = WebViewViewController()
         webVC.modalPresentationStyle = .fullScreen
         webVC.delegate = self
+        
+        let webViewPresenter = WebViewPresenter(authHelper: AuthHelper())
+        webViewPresenter.view = webVC
+        webVC.presenter = webViewPresenter
         
         present(webVC, animated: true)
     }

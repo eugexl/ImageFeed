@@ -24,27 +24,34 @@ final class OAuth2Service {
         task?.cancel()
         lastCode = code
         
-        let authTokenRequest =  URLRequests.shared.authTokenRequest(code: code)
-        
-        let task = URLSession.shared.objectTask(for: authTokenRequest) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
+        do {
+            let authTokenRequest = try URLRequests.shared.authTokenRequest(code: code)
             
-            guard let self = self else { return }
             
-            switch result {
+            let task = URLSession.shared.objectTask(for: authTokenRequest) { [weak self] (result: Result<OAuthTokenResponseBody, Error>) in
                 
-            case .success(let authBody):
+                guard let self = self else { return }
                 
-                completion(.success(authBody.accessToken))
-                self.task = nil
-                self.lastCode = nil
-                
-            case .failure(let error):
-                
-                completion(.failure(error))
+                switch result {
+                    
+                case .success(let authBody):
+                    
+                    completion(.success(authBody.accessToken))
+                    self.task = nil
+                    self.lastCode = nil
+                    
+                case .failure(let error):
+                    
+                    completion(.failure(error))
+                }
             }
+            
+            self.task = task
+            task.resume()
+            
+        } catch {
+            
+            completion(.failure(error))
         }
-        
-        self.task = task
-        task.resume()
     }
 }

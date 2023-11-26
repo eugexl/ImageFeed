@@ -7,7 +7,12 @@
 
 import UIKit
 
-final class AlertPresenter {
+public protocol AlertPresenterProtocol {
+    
+    func presentAlert(title: String?, message: String?, actions: [UIAlertAction]?, target: UIViewController)
+}
+
+final class AlertPresenter: AlertPresenterProtocol {
     
     static let shared = AlertPresenter()
     

@@ -16,6 +16,7 @@ final class SingleImageViewController: UIViewController {
         
         let button = UIButton()
         button.setImage(UIImage(named: NamedImages.buttonBack), for: .normal)
+        button.accessibilityIdentifier = "BackButton"
         
         return button
     }()

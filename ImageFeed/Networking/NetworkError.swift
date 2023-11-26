@@ -11,5 +11,6 @@ import Foundation
 enum NetworkError: Error {
     case httpResponseError
     case httpStatusCode(Int)
+    case invalidURL
     case noDataError
 }

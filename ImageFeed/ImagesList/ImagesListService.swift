@@ -7,13 +7,22 @@
 
 import UIKit
 
-final class ImagesListService {
+public protocol ImagesListServiceProtocol {
+    
+    static var DidChangeNotification: Notification.Name { get }
+    var photos: [Photo] { get set }
+    
+    func fetchPhotosNextPage()
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void)
+}
+
+final class ImagesListService: ImagesListServiceProtocol {
     
     static let shared = ImagesListService()
     
     static let DidChangeNotification = Notification.Name( rawValue: NotificationNames.imagesListServiceDidChange)
     
-    private (set) var photos: [Photo] = []
+    var photos: [Photo] = []
     
     private var lastLoadedPage: Int = 0
     
@@ -34,7 +43,6 @@ final class ImagesListService {
         let request = URLRequests.shared.photoListRequest(page: nextPage)
         
         let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
-//        let task = URLSession.shared.objectTask(for: request) { [weak self] (result: Result<[Photo], Error>) in
             
             guard let self = self else { return }
             
@@ -43,19 +51,9 @@ final class ImagesListService {
                 
                 var newPhotos: [Photo] = []
                 
-                photoResult.forEach { result in
-                    let size = CGSize(width: result.width, height: result.height)
-                    let createdAt = DateFormatters.iso8601DateFormatter.date(from: result.createdAt ?? "")
+                photoResult.forEach { photoResult in
                     
-                    newPhotos.append( Photo(
-                        id: result.id,
-                        size: size,
-                        createdAt: createdAt,
-                        welcomeDescription: result.welcomeDescription,
-                        thumbImageURL: result.urls.thumb,
-                        largeImageURL: result.urls.full,
-                        isLiked: result.isLiked
-                    ))
+                    newPhotos.append(self.convertResult2Photo(from: photoResult))
                 }
                 
                 photos.append(contentsOf: newPhotos)
@@ -103,9 +101,11 @@ final class ImagesListService {
             guard let self = self else { return }
             
             switch result {
-            case .success(let photoInfo):
+            case .success(let abbreviatedPhoto):
                 
-                self.photos = self.photos.map { $0.id == photoId ? photoInfo.photo : $0 }
+                let photo = self.convertResult2Photo(from: abbreviatedPhoto.photo)
+                
+                self.photos = self.photos.map { $0.id == photoId ? photo : $0 }
                 completion(.success(()))
                 
             case.failure(let error):
@@ -118,5 +118,21 @@ final class ImagesListService {
         
         self.task = task
         task.resume()
+    }
+    
+    private func convertResult2Photo(from photoResult: PhotoResult) -> Photo {
+        
+        let size = CGSize(width: photoResult.width, height: photoResult.height)
+        let createdAt = DateFormatters.iso8601DateFormatter.date(from: photoResult.createdAt ?? "")
+        
+        return Photo(
+            id: photoResult.id,
+            size: size,
+            createdAt: createdAt,
+            welcomeDescription: photoResult.welcomeDescription,
+            thumbImageURL: photoResult.urls.thumb,
+            largeImageURL: photoResult.urls.full,
+            isLiked: photoResult.isLiked
+        )
     }
 }
